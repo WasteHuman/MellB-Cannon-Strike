@@ -10,6 +10,11 @@ namespace UI.Animations.GameScreen
         [Header("Click Animations Setup")]
         [SerializeField] private float _clickAnimationDuration = 0.25f;
         [SerializeField] private Vector2 _clickedScale = Vector2.one;
+        [SerializeField] private float _clickRandomRotateOffset = 10f;
+        [SerializeField] private float _clickRotateAnimationDuration = 0.15f;
+        [SerializeField] private Ease _inRotationEase = Ease.OutBack;
+        [SerializeField] private Ease _outRotationEase = Ease.InBack;
+        [SerializeField] private bool _useRandomRotationOnClick = false;
 
         [Space(5), Header("Hover Animations Setup")]
         [SerializeField] private bool _usingHoverAnimation = false;
@@ -34,6 +39,8 @@ namespace UI.Animations.GameScreen
 
         private Tween _pulseTween;
         private Tween _hoverTween;
+        private Tween _clickUpTween;
+        private Tween _clickDownTween;
 
         private Sequence _clickSequence;
 
@@ -44,6 +51,8 @@ namespace UI.Animations.GameScreen
             _rectTransform = target;
             _originalScale = _rectTransform.localScale;
 
+            _clickAnimationDuration = 0.05f;
+
             _pulseTargetScale = _originalScale * _pulseScaleFactor;
 
             if (_usingPulseAnimation)
@@ -53,7 +62,33 @@ namespace UI.Animations.GameScreen
                 HoverAnimation();
         }
 
+        public void ClickDownAnimation()
+        {
+            _clickUpTween?.Kill();
+            _clickDownTween?.Kill();
+
+            _clickDownTween = _rectTransform
+                .DOScale(_clickedScale, _clickAnimationDuration)
+                .SetEase(Ease.InOutQuad)
+                .OnComplete(() => _rectTransform.localScale = _clickedScale);
+        }
+
+        public void ClickUpAnimation()
+        {
+            _clickDownTween?.Kill();
+            _clickUpTween?.Kill();
+
+            _clickUpTween = _rectTransform
+                .DOScale(Vector2.one, _clickAnimationDuration)
+                .SetEase(Ease.InOutQuad)
+                .OnComplete(() => _rectTransform.localScale = Vector2.one);
+        }
+
         public void StopAnimations() => _rectTransform.DOKill();
+
+        public void StopPulseAnimation() => _pulseTween?.Kill(true);
+
+        public void StopHoverAnimation() => _hoverTween?.Kill(true);
 
         public void HoverAnimation()
         {
@@ -79,6 +114,10 @@ namespace UI.Animations.GameScreen
         {
             _clickSequence?.Kill();
 
+            float randomZRotationOffset = UnityEngine.Random.Range(-_clickRandomRotateOffset, _clickRandomRotateOffset);
+            float pressRotationDuration = _clickRotateAnimationDuration;
+            float releaseRotationDuration = _clickRotateAnimationDuration * 0.5f;
+
             _clickSequence = DOTween.Sequence();
 
             _clickSequence.Append(
@@ -86,11 +125,32 @@ namespace UI.Animations.GameScreen
                 .DOScale(_clickedScale, _clickAnimationDuration)
                 .SetEase(Ease.OutSine));
 
+            if (_useRandomRotationOnClick)
+            {
+                _clickSequence.Join(
+                _rectTransform
+                .DOLocalRotate(new(0f, 0f, randomZRotationOffset), pressRotationDuration))
+                .SetEase(_inRotationEase);
+            }
+
             _clickSequence.Append(_rectTransform
                 .DOScale(Vector2.one, _clickAnimationDuration)
                 .SetEase(Ease.InSine));
 
-            _clickSequence.OnComplete(() => onComplete?.Invoke());
+            if (_useRandomRotationOnClick)
+            {
+                _clickSequence.Join(
+                _rectTransform
+                .DOLocalRotate(new(0f, 0f, 0f), releaseRotationDuration))
+                .SetEase(_outRotationEase);
+            }
+
+            _clickSequence.OnComplete(() =>
+            {
+                _rectTransform.localScale = _originalScale;
+                _rectTransform.localRotation = Quaternion.identity;
+                onComplete?.Invoke();
+            });
         }
 
         public Tween GetWaveTween(Vector2 targetScale, float duration)

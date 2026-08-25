@@ -7,6 +7,7 @@
         public const string GAME = "Game";
         public const string SETTINGS = "Settings";
         public const string SHOP_MENU = "Shop";
+        public const string WHEEL_OF_LUCK = "Wheel_Of_Luck";
         #endregion
 
         #region Settings Prefs

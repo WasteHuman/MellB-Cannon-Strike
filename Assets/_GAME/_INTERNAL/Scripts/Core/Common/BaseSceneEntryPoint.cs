@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Core.Common
 {
-    public abstract class GameEntryPoint : MonoBehaviour
+    public abstract class BaseSceneEntryPoint : MonoBehaviour
     {
-        [SerializeField] protected GameController _controller;
+        [SerializeField] protected SceneController _controller;
 
         private CancellationTokenSource _cancellationTokenSource;
 

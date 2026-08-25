@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/_GAME/_Scenes/Game.unity
     guid: 5435dc5fb3b3d66468aecf1444628998
   - enabled: 1
+    path: Assets/_GAME/_Scenes/Wheel_Of_Luck.unity
+    guid: 355f356953e76ab4c8eac7ccdb08ccff
+  - enabled: 1
     path: Assets/_GAME/_Scenes/Settings.unity
     guid: 94ae2a7078541194fb5f6f13a64487cf
   - enabled: 1

@@ -1,5 +1,8 @@
-﻿using DG.Tweening;
+﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace UI.Other
@@ -14,15 +17,36 @@ namespace UI.Other
         [SerializeField] private float _waveDelay = 0.1f;
         [SerializeField] private float _waveDuration = 0.5f;
         [SerializeField] private float _delayBetweenWaves = 1.25f;
-        [SerializeField] private LoopType _waveLoopType = LoopType.Yoyo;
-        [SerializeField, Tooltip("Use -1 for cycling animation")] private int _waveLoopsCount = -1;
+
+        private CancellationTokenSource _cts;
 
         private Sequence _waveSequence;
 
         private void OnDestroy() => StopWaveAnimation();
 
-        [ContextMenu("Force Start Wave Animation")]
-        public void StartWaveAnimation()
+        public async UniTaskVoid StartAsyncWaveAnimation()
+        {
+            _cts = new();
+
+            CancellationToken token = _cts.Token;
+
+            while (!token.IsCancellationRequested)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(_delayBetweenWaves));
+
+                if (this == null)
+                    return;
+
+                WaveAnimation();
+
+                if (_waveSequence == null)
+                    continue;
+
+                await _waveSequence.AsyncWaitForCompletion().AsUniTask();
+            }
+        }
+
+        private void WaveAnimation()
         {
             _waveSequence?.Kill();
 
@@ -39,23 +63,16 @@ namespace UI.Other
 
                 _waveSequence.Insert(i * _waveDelay, buttonWave);
             }
-
-            float lastButtonEndTime = (_buttonsToWaveAnimation.Count - 1) * _waveDelay + _waveDuration;
-
-            float intervalDuration = lastButtonEndTime + _delayBetweenWaves + _waveSequence.Duration();
-            _waveSequence.AppendInterval(intervalDuration);
-
-            _waveSequence.SetLoops(_waveLoopsCount, _waveLoopType);
         }
 
-        [ContextMenu("Force Stop Wave Animation")]
-        public void ForceStopAnimationWithComplete()
-        {
-            StopWaveAnimation(true);
-        }
+        public void ForceStopAnimationWithComplete() => StopWaveAnimation(true);
 
         public void StopWaveAnimation(bool complete = false)
         {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+
             _waveSequence?.Kill(complete);
             _waveSequence = null;
         }

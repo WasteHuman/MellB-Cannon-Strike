@@ -1,9 +1,8 @@
-﻿using Core.Services;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Core.Common
 {
-    public abstract class GameController : MonoBehaviour
+    public abstract class SceneController : MonoBehaviour
     {
         public abstract void Enter();
         public abstract void Initialize();
