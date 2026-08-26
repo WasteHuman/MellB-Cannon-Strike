@@ -6,10 +6,6 @@ using UnityEngine.InputSystem;
 
 namespace Core.WheelOfLuck
 {
-    /// <summary>
-    /// Coordinates the wheel use-case.
-    /// Game rules/state are kept outside the View; presentation is delegated to WheelView.
-    /// </summary>
     public class WheelSceneController : SceneController
     {
         [SerializeField] private WheelConfig _config;

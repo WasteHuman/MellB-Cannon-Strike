@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Core.Common
 {
@@ -7,12 +6,8 @@ namespace Core.Common
     {
         [SerializeField] protected SceneController _controller;
 
-        private CancellationTokenSource _cancellationTokenSource;
-
         private void Start()
         {
-            _cancellationTokenSource = new();
-
             _controller.Enter();
             _controller.Initialize();
         }
@@ -20,10 +15,6 @@ namespace Core.Common
         private void OnDestroy()
         {
             _controller.Exit();
-
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = null;
         }
     }
 }

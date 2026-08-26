@@ -2,10 +2,6 @@ using System;
 
 namespace Core.WheelOfLuck
 {
-    /// <summary>
-    /// Runtime state of a wheel instance.
-    /// It contains no Unity/UI logic and is not persisted by itself.
-    /// </summary>
     public sealed class WheelState
     {
         public int FreeSpins { get; set; }

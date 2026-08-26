@@ -1,5 +1,5 @@
 using Core.Common;
-using Core.Gameplay.Player;
+using Core.Gameplay.Game.Player;
 using UI.Player;
 using UnityEngine;
 
@@ -10,10 +10,7 @@ namespace Core.Gameplay.Controllers
         [SerializeField] private PlayerInfoPanelView _playerInfoPanelView;
         [SerializeField] private PlayerController _playerController;
 
-        public override void Enter()
-        {
-            
-        }
+        public override void Enter() { }
 
         public override void Initialize()
         {

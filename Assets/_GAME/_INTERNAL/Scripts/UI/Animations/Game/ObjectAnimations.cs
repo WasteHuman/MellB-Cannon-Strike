@@ -25,9 +25,10 @@ namespace UI.Animations.Game
         [SerializeField] private bool _hoverAnimationEnabled = false;
         [SerializeField] private bool _pulseAnimationEnabled = false;
 
-        private Vector3 _originalScale;
+        protected Vector3 _originalScale;
 
         private Tween _appearTween;
+        private Tween _disappearTween;
         private Tween _hoverTween;
         private Tween _pulseTween;
 
@@ -44,6 +45,7 @@ namespace UI.Animations.Game
         {
             _hoverTween?.Kill();
             _appearTween?.Kill();
+            _disappearTween?.Kill();
             _pulseTween?.Kill();
         }
 
@@ -51,6 +53,7 @@ namespace UI.Animations.Game
         {
             _hoverTween?.Kill();
             _appearTween?.Kill();
+            _disappearTween?.Kill();
             _pulseTween?.Kill();
         }
 
@@ -83,15 +86,37 @@ namespace UI.Animations.Game
         public void Appear(Vector3 originalScale, Action onComplete = null)
         {
             transform.localScale = Vector3.zero;
+            gameObject.SetActive(true);
             _originalScale = originalScale;
 
             _appearTween?.Kill();
+            _disappearTween?.Kill();
 
             _appearTween = transform
                 .DOScale(originalScale, _appearAnimationDuration)
                 .SetEase(Ease.InOutBounce)
-                .OnComplete(() => onComplete?.Invoke())
-                .OnKill(() => transform.localScale = _originalScale);
+                .OnComplete(() =>
+                {
+                    transform.localScale = _originalScale;
+                    onComplete?.Invoke();
+                });
+        }
+
+        public void Disappear(Action onComplete = null)
+        {
+            _appearTween?.Kill();
+            _disappearTween?.Kill();
+
+            float disappearAnimationDuration = _appearAnimationDuration * 0.25f;
+
+            _disappearTween = transform
+                .DOScale(Vector3.zero, disappearAnimationDuration)
+                .SetEase(Ease.InOutBounce)
+                .OnComplete(() =>
+                {
+                    transform.localScale = Vector3.zero;
+                    onComplete?.Invoke();
+                });
         }
     }
 }
