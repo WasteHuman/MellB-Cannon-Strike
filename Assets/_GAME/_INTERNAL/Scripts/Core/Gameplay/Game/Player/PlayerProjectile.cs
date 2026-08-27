@@ -16,6 +16,7 @@ namespace Core.Gameplay.Game.Player
 
         private Rigidbody2D _rb;
         private Transform _defaultPosition;
+        private bool _hasHit;
 
         public int CurrentDamage => _currentDamage;
 
@@ -23,7 +24,7 @@ namespace Core.Gameplay.Game.Player
 
         void OnCollisionEnter2D(Collision2D collision)
         {
-            if(!collision.gameObject.TryGetComponent<TargetBallView>(out var element))
+            if(!collision.gameObject.TryGetComponent<TargetBallView>(out var _))
                 return;
             
             HitBall();
@@ -50,6 +51,11 @@ namespace Core.Gameplay.Game.Player
 
         public void ShootProjectile(float shootForce)
         {
+            _hasHit = false;
+
+            _rb.angularVelocity = 0f;
+            _rb.linearVelocity = Vector2.zero;
+
             _rb.bodyType = RigidbodyType2D.Dynamic;
             _rb.AddForce(_shootDirection * shootForce, ForceMode2D.Impulse);
             AudioService.Instance.PlaySfx(SoundType.Player_Ball_Shoot);
@@ -58,15 +64,25 @@ namespace Core.Gameplay.Game.Player
 
         public void ResetProjectilePosition()
         {
+            _rb.angularVelocity = 0f;
+            _rb.linearVelocity = Vector2.zero;
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+
             transform.SetParent(_defaultPosition);
             transform.position = _defaultPosition.position;
         }
 
         private void HitBall()
         {
+            if(_hasHit)
+                return;
+                
+            _hasHit = true;
             AudioService.Instance.PlaySfx(SoundType.Player_Ball_Hit);
 
             OnBallHitted?.Invoke();
+            _rb.angularVelocity = 0f;
+            _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
         }
     }

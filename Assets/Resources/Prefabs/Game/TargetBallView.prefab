@@ -110,6 +110,7 @@ MonoBehaviour:
   _targetSprite: {fileID: 7079702214686220870}
   _hpLabel: {fileID: 6135091613839335299}
   _impulseForce: 15
+  _speed: 2.5
 --- !u!58 &7622583158980816018
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -158,10 +159,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 7.5
+  m_Mass: 2.5
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0.095
+  m_AngularDamping: 0
+  m_GravityScale: 0.15
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -172,7 +173,7 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!1 &2919727468549191282
 GameObject:
   m_ObjectHideFlags: 0

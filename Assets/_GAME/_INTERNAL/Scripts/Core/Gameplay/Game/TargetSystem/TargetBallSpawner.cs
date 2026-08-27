@@ -68,16 +68,15 @@ namespace Core.Gameplay.Game.TargetSystem
 
                 newTargetBall.Init(2, spawnPosition, impulseDirection);
                 _currentSpawnedTargets++;
-                _nextSpawnLeft = true;
+                _nextSpawnLeft = !_nextSpawnLeft;
             }
         }
 
         private void HandleDestroyedTarget(TargetBallView view)
         {
             _targetsPool.ReturnToPool(view);
-            _currentSpawnedTargets--;
-            _nextSpawnLeft = false;
 
+            _currentSpawnedTargets = Mathf.Max(0, _currentSpawnedTargets - 1);
             // TODO: Система увеличения сложности
         }
     }

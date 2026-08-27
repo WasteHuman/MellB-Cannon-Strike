@@ -89,6 +89,7 @@ namespace Core.Gameplay.Game.Player
 
                 await PlayerHitProcessAsync(token);
                 
+                _hitProjectileSource = new();
                 _ballProjectile.ShootProjectile(_playerShootForce);
 
                 await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay * 0.5f), cancellationToken: token);
@@ -124,7 +125,6 @@ namespace Core.Gameplay.Game.Player
 
         private async UniTask ProcessProjectileHitAsync(CancellationToken token)
         {
-            _hitProjectileSource = new();
             await _hitProjectileSource.Task.AttachExternalCancellation(token);
 
             _ballProjectile.Hide();

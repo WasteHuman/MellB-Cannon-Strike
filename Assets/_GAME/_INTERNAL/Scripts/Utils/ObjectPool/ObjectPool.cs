@@ -45,7 +45,7 @@ namespace Utils
 
         public List<T> GetFreeElements()
         {
-            return _pool.Where(x => x != null && x.gameObject.activeSelf).ToList();
+            return _pool.Where(x => x != null && !x.gameObject.activeSelf).ToList();
         }
 
         public T AddItemToPool()

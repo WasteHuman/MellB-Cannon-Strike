@@ -6,9 +6,9 @@ PhysicsMaterial2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TargetBallMaterial
+  m_Name: BoundaryMaterial
   serializedVersion: 2
   friction: 0
-  bounciness: 1.5
-  m_FrictionCombine: 1
-  m_BounceCombine: 3
+  bounciness: 0.9
+  m_FrictionCombine: 0
+  m_BounceCombine: 2
