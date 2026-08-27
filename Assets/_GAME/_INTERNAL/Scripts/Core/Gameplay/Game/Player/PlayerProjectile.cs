@@ -1,5 +1,6 @@
 using System;
 using Core.Gameplay.Game.TargetSystem;
+using Core.Services.Audio;
 using UI.Animations.Game;
 using UnityEngine;
 
@@ -11,8 +12,12 @@ namespace Core.Gameplay.Game.Player
     {
         [SerializeField] private Vector2 _shootDirection = Vector2.up;
 
+        private int _currentDamage = 1;
+
         private Rigidbody2D _rb;
         private Transform _defaultPosition;
+
+        public int CurrentDamage => _currentDamage;
 
         public event Action OnBallHitted;
 
@@ -20,9 +25,8 @@ namespace Core.Gameplay.Game.Player
         {
             if(!collision.gameObject.TryGetComponent<TargetBallView>(out var element))
                 return;
-
-            OnBallHitted?.Invoke();
-            _rb.bodyType = RigidbodyType2D.Kinematic;
+            
+            HitBall();
         }
 
         void OnDestroy()
@@ -30,19 +34,25 @@ namespace Core.Gameplay.Game.Player
             OnBallHitted = null;
         }
 
-        public void Init(Transform defaultPosition)
+        public void Init(Transform defaultPosition, int currentDamage = 1)
         {
             _originalScale = transform.localScale;
             _defaultPosition = defaultPosition;
             _rb = GetComponent<Rigidbody2D>();
+
+            // TODO: Damage будет браться из PlayerService
+            _currentDamage = currentDamage;
         }
 
+        public void BallAtTheKillzone() => HitBall();
         public void Show() => Appear(_originalScale);
         public void Hide() => Disappear(() => gameObject.SetActive(false));
+
         public void ShootProjectile(float shootForce)
         {
             _rb.bodyType = RigidbodyType2D.Dynamic;
             _rb.AddForce(_shootDirection * shootForce, ForceMode2D.Impulse);
+            AudioService.Instance.PlaySfx(SoundType.Player_Ball_Shoot);
             transform.SetParent(null);
         }
 
@@ -50,6 +60,14 @@ namespace Core.Gameplay.Game.Player
         {
             transform.SetParent(_defaultPosition);
             transform.position = _defaultPosition.position;
+        }
+
+        private void HitBall()
+        {
+            AudioService.Instance.PlaySfx(SoundType.Player_Ball_Hit);
+
+            OnBallHitted?.Invoke();
+            _rb.bodyType = RigidbodyType2D.Kinematic;
         }
     }
 }

@@ -20,6 +20,9 @@ namespace Core.Gameplay.Game.Player
         [SerializeField] private float _playerReloadTime = 2f;
         [SerializeField] private float _playerShootForce = 5f;
 
+        [Tooltip("Using for setup delay between Player Pose sprites")]
+        [SerializeField] private float _playerSpriteChangeDelay = 0.35f;
+
         [Space(5), Header("Player Pose Sprites Setup")]
         [SerializeField] private Sprite _idlePose;
         [SerializeField] private Sprite _prepareToHitPose;
@@ -35,8 +38,6 @@ namespace Core.Gameplay.Game.Player
 
         public void Initialize()
         {
-            Debug.Log("[Player Controller] Initialize START");
-
             _goToLeftButton.IsUseHeldFunc = true;
             _goToRightButton.IsUseHeldFunc = true;
 
@@ -46,7 +47,7 @@ namespace Core.Gameplay.Game.Player
             _ballProjectile.Init(_ballProjectileContainer);
             _ballProjectile.OnBallHitted += HandleHittedBall;
 
-            Debug.Log("[Player Controller] Starting Projectile Flow");
+            LoadCurrentPlayerSkin();
 
             ProjectileFlowAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
@@ -69,18 +70,18 @@ namespace Core.Gameplay.Game.Player
 #endif
         }
 
+        private void LoadCurrentPlayerSkin()
+        {
+            
+        }
+
         private async UniTask ProjectileFlowAsync(CancellationToken token)
         {
-            Debug.Log("[Player Controller] Projectile Flow START");
-
             while (!token.IsCancellationRequested)
             {
-                Debug.Log($"[Player Controller] Player State: {_state}");
-
                 if (_state != PlayerState.Idle)
                 {
                     await UniTask.Yield(token);
-                    Debug.Log($"[Player Controller] Player State: {_state}");
                     continue;
                 }
 
@@ -90,21 +91,19 @@ namespace Core.Gameplay.Game.Player
                 
                 _ballProjectile.ShootProjectile(_playerShootForce);
 
-                await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: token);
+                await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay * 0.5f), cancellationToken: token);
 
                 _playerView.sprite = _idlePose;
 
                 await ProcessProjectileHitAsync(token);
 
                 await ProjectileReloadAsync(token);
-                Debug.Log($"[Player Controller] Player State: {_state}");
             }
         }
 
         private async UniTask ProjectileReloadAsync(CancellationToken token)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(_playerReloadTime), cancellationToken: token);
-            Debug.Log($"[Player Controller] Player State: {_state}");
 
             _state = PlayerState.Idle;
 
@@ -115,9 +114,9 @@ namespace Core.Gameplay.Game.Player
 
         private async UniTask PlayerHitProcessAsync(CancellationToken token)
         {
-            await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay), cancellationToken: token);
             _playerView.sprite = _prepareToHitPose;
-            await UniTask.Delay(TimeSpan.FromSeconds(0.25f), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay), cancellationToken: token);
             _playerView.sprite = _hitPose;
 
             return;
@@ -133,10 +132,8 @@ namespace Core.Gameplay.Game.Player
 
             _ballProjectile.ResetProjectilePosition();
             await UniTask.Delay(10, cancellationToken: token);
-            Debug.Log($"[Player Controller] Player State: {_state}");
 
             _state = PlayerState.Reload;
-            Debug.Log($"[Player Controller] Player State: {_state}");
             return;
         }
 

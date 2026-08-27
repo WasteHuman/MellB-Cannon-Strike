@@ -13,10 +13,6 @@ namespace UI.Loading
                 _progressBar.SetProgress(0f);
         }
 
-        public void SetLoadingProgress(float progress)
-        {
-            Debug.Log($"[UI Loading View] Progress: {progress}");
-            _progressBar.SetProgress(progress);
-        }
+        public void SetLoadingProgress(float progress) =>  _progressBar.SetProgress(progress);
     }
 }

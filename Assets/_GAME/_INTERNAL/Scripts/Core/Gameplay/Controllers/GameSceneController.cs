@@ -1,5 +1,6 @@
 using Core.Common;
 using Core.Gameplay.Game.Player;
+using Core.Gameplay.Game.TargetSystem;
 using UI.Player;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Core.Gameplay.Controllers
     {
         [SerializeField] private PlayerInfoPanelView _playerInfoPanelView;
         [SerializeField] private PlayerController _playerController;
+        [SerializeField] private TargetSystemController _targetSystemController;
 
         public override void Enter() { }
 
@@ -16,6 +18,7 @@ namespace Core.Gameplay.Controllers
         {
             _playerInfoPanelView.Init();
             _playerController.Initialize();
+            _targetSystemController.Initialize();
         }
 
         public override void Exit()

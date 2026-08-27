@@ -13,11 +13,10 @@ namespace Core.Services.SaveSystem
 
         public PlayerData PlayerData => _playerData;
 
-        public void Init()
+        public void Init(bool isDebug = false)
         {
-#if UNITY_EDITOR
-            DeleteAllSaves();
-#endif
+            if(isDebug)
+                DeleteAllSaves();
 
             LoadPlayerData();
         }

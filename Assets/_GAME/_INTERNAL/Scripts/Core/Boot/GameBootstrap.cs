@@ -2,6 +2,7 @@
 using Core.Services.AdsService;
 using Core.Services.Analytics;
 using Core.Services.Audio;
+using Core.SO.Debug;
 using Io.AppMetrica;
 using System.Collections;
 using UI.Loading;
@@ -14,6 +15,7 @@ namespace Core.Boot
     {
         private static GameBootstrap _instance;
 
+        private DebugConfig _debugConfig;
         private AnalyticsService _analyticsService;
         private AdsService _adsService;
         private AudioService _audioService;
@@ -27,9 +29,6 @@ namespace Core.Boot
 
             Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-#if UNITY_EDITOR
-            PlayerPrefs.DeleteAll();
-#endif
 
             Run();
         }
@@ -73,7 +72,7 @@ namespace Core.Boot
                 InitializeExternalSDK();
 
                 _instance.LoadMainScene();
-                GameServices.InitializeAll();
+                GameServices.InitializeAll(_instance._debugConfig.IsDebug);
             }
             catch (System.Exception ex)
             {
@@ -98,6 +97,13 @@ namespace Core.Boot
 
         private void LoadMainScene()
         {
+            _debugConfig = Resources.Load<DebugConfig>("Configs/Debug/DebugConfig");
+            if(_debugConfig != null)
+            {
+                if(_debugConfig.IsDebug)
+                    PlayerPrefs.DeleteAll();
+            }
+
             var loadingScreenViewPrefab = Resources.Load<UILoadingView>("Prefabs/UI/UILoadingView");
 
             if (loadingScreenViewPrefab == null)

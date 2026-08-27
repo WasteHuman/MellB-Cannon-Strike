@@ -73,7 +73,7 @@ namespace Core.Services.Audio
         {
             var clip = _sounds.FirstOrDefault(sound => sound.Type == type);
 
-            if (clip == null)
+            if (clip == null || clip.Clip == null)
             {
                 Debug.LogWarning("[AudioManager] SFX clip is null");
                 return;

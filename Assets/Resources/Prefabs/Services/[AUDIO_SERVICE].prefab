@@ -44,9 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4991b6a2d827dac49a4e84db94a8cbde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Services.Audio.AudioService
-  _music: {fileID: 0}
+  _music: {fileID: 8300000, guid: d252d445a72eedc40aa2d56b4e73636f, type: 3}
   _sounds:
   - Type: 0
     Clip: {fileID: 8300000, guid: c605d75b0c1025a4ca5d1da35306373c, type: 3}
+  - Type: 2
+    Clip: {fileID: 8300000, guid: 794162941f598af41a9cc44af34caa0d, type: 3}
+  - Type: 3
+    Clip: {fileID: 8300000, guid: d8940b781b8968349ad83daf7b123178, type: 3}
   _musicSource: {fileID: 0}
   _sfxSource: {fileID: 0}

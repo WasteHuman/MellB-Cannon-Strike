@@ -7,6 +7,8 @@ namespace Core.Services.Player
         private PlayerData _currentPlayerData;
 
         public float PlayerCoins => _currentPlayerData.Coins;
+        public int CurrentPlayerSkinId => _currentPlayerData.CurrentPlayerSkinId;
+
         public void Init(PlayerData playerData)
         {
             _currentPlayerData = playerData;

@@ -10,10 +10,10 @@ namespace Core.Services
         public static SaveService SaveService { get; private set; }
         public static EconomyService EconomyService { get; private set; }
 
-        public static void InitializeAll()
+        public static void InitializeAll(bool isDebug = false)
         {
             SaveService = new();
-            SaveService.Init();
+            SaveService.Init(isDebug);
 
             PlayerService = new();
             PlayerService.Init(SaveService.PlayerData);

@@ -116,7 +116,8 @@ namespace UI.Animations.Game
                 {
                     transform.localScale = Vector3.zero;
                     onComplete?.Invoke();
-                });
+                })
+                .OnKill(() => transform.localScale = _originalScale);
         }
     }
 }

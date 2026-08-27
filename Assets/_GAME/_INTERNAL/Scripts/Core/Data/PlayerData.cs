@@ -2,9 +2,10 @@
 
 namespace Core.Data
 {
-    [System.Serializable]
+    [Serializable]
     public class PlayerData
     {
+        public int CurrentPlayerSkinId;
         public float Coins;
         public DateTime? LastDailyBonusTime;
 
@@ -12,6 +13,7 @@ namespace Core.Data
         {
             Coins = GameConstants.INITIAL_COINS;
             LastDailyBonusTime = DateTime.Now;
+            CurrentPlayerSkinId = 0;
         }
     }
 }
