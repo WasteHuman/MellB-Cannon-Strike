@@ -21,8 +21,11 @@
         public const string KEY_LAST_FREE_DAILY_BONUS_CLAIM = "Last_Daily_Free_Bonus";
         #endregion
 
-        #region Economy & Limits
+        #region Economy & Player Data
         public const float INITIAL_COINS = 1000f;
+        public const int INITIAL_PLAYER_DAMAGE = 1;
+        public const int INITIAL_PLAYER_SKIN_ID = 0;
+        public const float INITIAL_PLAYER_RELOAD = 2f;
         #endregion
     }
 }

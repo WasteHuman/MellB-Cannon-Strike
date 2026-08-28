@@ -1,5 +1,6 @@
 using System;
 using Core.Data;
+using Core.Services;
 using Core.Services.Analytics;
 using UnityEngine;
 
@@ -82,6 +83,8 @@ namespace Core.WheelOfLuck
             GameResult result = new(
                 isWin: isWin,
                 rewardCoins: rewardCoins);
+
+            GameServices.EconomyService.AddCoins(result.RewardCoins);
 
             if (reward.ReportAnalytics)
             {

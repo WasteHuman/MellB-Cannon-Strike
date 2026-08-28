@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Core.Gameplay.Controllers
 {
-    public class MainSceneController : SceneController
+    public class ShopSceneController : SceneController
     {
-        [SerializeField] private PlayerInfoPanelView _playerInfoPanelView;
+        [SerializeField] private PlayerInfoPanelView _playerInfoView;
 
         public override void Enter() {}
         
         public override void Initialize()
         {
-            _playerInfoPanelView.Init();
+            _playerInfoView.Init();
         }
 
         public override void Exit()
         {
-            _playerInfoPanelView.Dispose();
+            _playerInfoView.Dispose();
         }
     }
 }

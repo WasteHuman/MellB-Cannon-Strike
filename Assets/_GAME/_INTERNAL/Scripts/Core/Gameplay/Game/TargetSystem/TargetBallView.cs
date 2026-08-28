@@ -20,6 +20,8 @@ namespace Core.Gameplay.Game.TargetSystem
         private int _currentHp;
         private bool _isDestroyed;
 
+        public bool CanSplit => _currentHp > 4;
+
         public event Action<TargetBallView> OnTargetDestroyed;
 
         void Awake() => _rb = GetComponent<Rigidbody2D>();
@@ -40,16 +42,24 @@ namespace Core.Gameplay.Game.TargetSystem
 
         public void Init(int currentHp, Vector2 position, Vector2 impulseDirection)
         {
-            // TODO: Рандомный спрайт в параметры или отдельный метод
             _currentHp = currentHp;
             _isDestroyed = false;
             _hpLabel.text = $"{_currentHp}";
+
             _rb.linearVelocity = Vector2.zero;
             _rb.angularVelocity = 0f;
 
             transform.position = position;
 
             _rb.AddForce(impulseDirection * _impulseForce, ForceMode2D.Impulse);
+        }
+
+        public void SetSprite(Sprite sprite) => _targetSprite.sprite = sprite;
+
+        public void FreezeTarget()
+        {
+            _rb.bodyType = RigidbodyType2D.Static;
+            gameObject.SetActive(false);
         }
 
         private void ApplyDamage(int damage)
@@ -70,6 +80,11 @@ namespace Core.Gameplay.Game.TargetSystem
             }
 
             _hpLabel.text = $"{_currentHp}";
+        }
+
+        private void SplitTarget()
+        {
+            
         }
     }
 }

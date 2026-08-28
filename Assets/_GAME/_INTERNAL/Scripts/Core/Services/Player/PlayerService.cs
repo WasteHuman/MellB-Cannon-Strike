@@ -14,6 +14,9 @@ namespace Core.Services.Player
             _currentPlayerData = playerData;
         }
 
+        public void DoublePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= 2;
+        public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.25f;
+
         /// <summary>
         /// Получить прямой доступ к PlayerData для сложных операций
         /// Использовать осторожно, только для внутренних сервисов

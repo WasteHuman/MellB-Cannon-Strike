@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Core.Common;
+using UI.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,7 @@ namespace Core.WheelOfLuck
     {
         [SerializeField] private WheelConfig _config;
         [SerializeField] private WheelView _view;
+        [SerializeField] private PlayerInfoPanelView _playerInfoView;
 
         [Header("Debug")]
         [SerializeField] private bool _isDebug;
@@ -64,6 +66,7 @@ namespace Core.WheelOfLuck
         public override void Initialize()
         {
             StartCooldownUpdater();
+            _playerInfoView.Init();
         }
 
         public override void Exit()
@@ -72,6 +75,7 @@ namespace Core.WheelOfLuck
                 _view.OnSpinClicked -= HandleSpinClicked;
 
             StopCooldownUpdater();
+            _playerInfoView.Dispose();
         }
 
         private void OnDisable()
@@ -266,7 +270,7 @@ namespace Core.WheelOfLuck
 
         private void StopCooldownUpdater()
         {
-            if (_cooldownCoroutine == null)
+            if (_cooldownCoroutine == null || this == null)
                 return;
 
             StopCoroutine(_cooldownCoroutine);

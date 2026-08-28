@@ -38,8 +38,7 @@ namespace UI.Screens
 
         public override void Open()
         {
-            base.Open();
-
+            _panelRect.gameObject.SetActive(true);
             _openTween?.Kill();
 
             _openTween = _panelRect

@@ -23,6 +23,8 @@ namespace UI.Player
             GameServices.EconomyService.RequestCoinsBalance();
         }
 
+        void OnDestroy() => Dispose();
+
         public void Dispose() => GameServices.EconomyService.OnCoinsBalanceChanged -= HandleChangedCoinsBalance;
 
         private void HandleChangedCoinsBalance(float amount)

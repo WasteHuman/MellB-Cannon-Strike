@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
+using Core.Gameplay.Game.TargetSystem;
 using Cysharp.Threading.Tasks;
+using Extensions.GameObject;
 using UI.Other;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -35,6 +37,9 @@ namespace Core.Gameplay.Game.Player
         private PlayerState _state = PlayerState.Idle;
 
         private UniTaskCompletionSource _hitProjectileSource;
+        private bool _isPlayerAlive = true;
+
+        public event Action OnPlayerLose;
 
         public void Initialize()
         {
@@ -47,6 +52,8 @@ namespace Core.Gameplay.Game.Player
             _ballProjectile.Init(_ballProjectileContainer);
             _ballProjectile.OnBallHitted += HandleHittedBall;
 
+            _isPlayerAlive = true;
+
             LoadCurrentPlayerSkin();
 
             ProjectileFlowAsync(this.GetCancellationTokenOnDestroy()).Forget();
@@ -57,6 +64,17 @@ namespace Core.Gameplay.Game.Player
             _goToLeftButton.OnButtonClick -= HandleLeftButtonClick;
             _goToRightButton.OnButtonClick -= HandleRightButtonClick;
             _ballProjectile.OnBallHitted -= HandleHittedBall;
+
+            OnPlayerLose = null;
+        }
+
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            if(!collision.gameObject.GetComponentOrNull<TargetBallView>())
+                return;
+
+            _isPlayerAlive = false;
+            OnPlayerLose?.Invoke();
         }
 
         void Update()
@@ -77,7 +95,7 @@ namespace Core.Gameplay.Game.Player
 
         private async UniTask ProjectileFlowAsync(CancellationToken token)
         {
-            while (!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested && _isPlayerAlive)
             {
                 if (_state != PlayerState.Idle)
                 {
@@ -139,12 +157,18 @@ namespace Core.Gameplay.Game.Player
 
         private void HandleLeftButtonClick()
         {
+            if(!_isPlayerAlive)
+                return;
+
             Vector3 movement = new(-1f, 0f, 0f);
             _player.transform.position += _playerMoveSpeed * Time.deltaTime * movement;
         }
 
         private void HandleRightButtonClick()
         {
+            if(!_isPlayerAlive)
+                return;
+
             Vector3 movement = new(1f, 0f, 0f);
             _player.transform.position += _playerMoveSpeed * Time.deltaTime * movement;
         }

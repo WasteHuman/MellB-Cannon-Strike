@@ -840,6 +840,7 @@ MonoBehaviour:
   _playerInfoPanelView: {fileID: 1656560127}
   _playerController: {fileID: 1805253510}
   _targetSystemController: {fileID: 795617033}
+  _screenController: {fileID: 40065950}
 --- !u!1 &305213912
 GameObject:
   m_ObjectHideFlags: 0
@@ -2082,6 +2083,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 594e66afac3d96d4f9bdcdf6bef7d8ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Game.TargetSystem.TargetSystemController
+  _spritesConfig: {fileID: 11400000, guid: 652aadfe3ef46d14eb3d43732f40a064, type: 2}
+  _difficultConfig: {fileID: 11400000, guid: 064c6f3ad1562114aa43e62b6831fab1, type: 2}
   _spawner: {fileID: 1443518883}
 --- !u!1 &803233114
 GameObject:
@@ -3347,9 +3350,9 @@ MonoBehaviour:
   _leftSpawnpoint: {fileID: 970124859}
   _rightSpawnpoint: {fileID: 782315383}
   _targetBallViewPrefab: {fileID: 2085576949502486813, guid: 2aabc7abed9310041b5e47e365f46b4d, type: 3}
-  _initialCount: 15
-  _spawnDelay: 1
-  _maxSpawnedTargetsAtMoment: 5
+  _initialCount: 6
+  _spawnDelay: 1.5
+  _maxSpawnedTargetsAtMoment: 3
 --- !u!1 &1502129589
 GameObject:
   m_ObjectHideFlags: 0
@@ -5001,6 +5004,7 @@ MonoBehaviour:
   _targetSprite: {fileID: 0}
   _hpLabel: {fileID: 0}
   _impulseForce: 1.5
+  _speed: 2.5
 --- !u!1 &2051711012
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using Core.Gameplay.Game.TargetSystem;
 using Core.Services.Audio;
+using Extensions.GameObject;
 using UI.Animations.Game;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Core.Gameplay.Game.Player
 
         void OnCollisionEnter2D(Collision2D collision)
         {
-            if(!collision.gameObject.TryGetComponent<TargetBallView>(out var _))
+            if(!collision.gameObject.GetComponentOrNull<TargetBallView>())
                 return;
             
             HitBall();

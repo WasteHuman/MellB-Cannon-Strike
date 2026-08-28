@@ -978,6 +978,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Core.WheelOfLuck.WheelSceneController
   _config: {fileID: 11400000, guid: 81f36cc73dcefdc409a5c70059dc4a10, type: 2}
   _view: {fileID: 2101004743}
+  _playerInfoView: {fileID: 1856988588}
   _isDebug: 1
 --- !u!4 &560791163
 Transform:
