@@ -25,10 +25,28 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 1
+      time: 0.2344237
+      value: 0.2899187
+      inSlope: 3.2014136
+      outSlope: 3.2014136
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.16740188
+      outWeight: 0.09677365
+    - serializedVersion: 3
+      time: 0.5734803
+      value: 0.92142695
+      inSlope: 0.6410069
+      outSlope: 0.6410069
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.26291466
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.99999994
       value: 1
-      inSlope: 2
-      outSlope: 2
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -38,5 +56,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   <MinTargetsHp>k__BackingField: 2
   <MaxTargetsHp>k__BackingField: 20
-  <HpRandomRangeOffset>k__BackingField: 5
+  <HpRandomRangeOffset>k__BackingField: 2
   <MaxDifficultyDestroyedTargets>k__BackingField: 50
+  <MinTargetScale>k__BackingField: 0.175
+  <MaxTargetScale>k__BackingField: 0.3

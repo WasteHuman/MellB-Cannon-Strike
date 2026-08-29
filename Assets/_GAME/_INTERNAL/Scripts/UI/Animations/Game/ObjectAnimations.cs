@@ -10,11 +10,18 @@ namespace UI.Animations.Game
         [SerializeField] private float _appearAnimationDuration = 0.35f;
         [SerializeField] private float _hoverAnimationDuration = 0.5f;
         [SerializeField] private float _pulseAnimationDuration = 1f;
+        [SerializeField] private float _collaplseAnimationDuration = 0.55f;
+        [SerializeField] private float _shakeScaleAnimationDuration = 0.15f;
 
         [Space(5), Header("Hover Animation Setup")]
         [SerializeField] private float _yMoveOffset = 1.0f;
         [SerializeField] private LoopType _hoverLoopType = LoopType.Yoyo;
         [SerializeField, Tooltip("Set -1 for infinite loops count")] private int _hoverLoopCount = -1;
+
+        [Space(5), Header("Collapse Animation Setup")]
+        [SerializeField] private float _shakeScaleStrength = 0.08f;
+        [SerializeField] private Ease _collapseInEase = Ease.OutQuad;
+        [SerializeField] private Ease _collapseOutEase = Ease.InBack;
 
         [Space(5), Header("Pulse Animation Setup")]
         [SerializeField] private float _pulseTargetScale = 0.9f;
@@ -31,6 +38,8 @@ namespace UI.Animations.Game
         private Tween _disappearTween;
         private Tween _hoverTween;
         private Tween _pulseTween;
+        private Tween _shakeScaleTween;
+        private Sequence _collapseSequence;
 
         private void OnEnable()
         {
@@ -118,6 +127,36 @@ namespace UI.Animations.Game
                     onComplete?.Invoke();
                 })
                 .OnKill(() => transform.localScale = _originalScale);
+        }
+
+        public void CollapseAnimation(Action onComplete = null)
+        {
+            _collapseSequence?.Kill();
+            _shakeScaleTween?.Kill();
+
+            transform.localScale = _originalScale;
+
+            _collapseSequence = DOTween.Sequence();
+
+            float squashDuration = _collaplseAnimationDuration * 0.25f;
+            float collapseDuration = _collaplseAnimationDuration * 0.75f;
+
+            _shakeScaleTween = transform.DOShakeScale(_shakeScaleStrength, _shakeScaleAnimationDuration);
+
+            _collapseSequence
+                .Append(transform.DOScale(_originalScale * 1.1f, squashDuration))
+                .SetEase(_collapseInEase);
+
+            _collapseSequence
+                .Append(transform.DOScale(Vector3.zero, squashDuration))
+                .SetEase(_collapseOutEase);
+
+            _collapseSequence.OnComplete(() =>
+            {
+                gameObject.SetActive(false);
+                transform.localScale = _originalScale;
+                onComplete?.Invoke();
+            });
         }
     }
 }

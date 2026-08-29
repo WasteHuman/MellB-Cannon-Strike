@@ -10,5 +10,7 @@ namespace SO.Game.DifficultSystem
         [field: SerializeField] public int MaxTargetsHp { get; private set; }
         [field: SerializeField] public int HpRandomRangeOffset { get; private set; }
         [field: SerializeField] public int MaxDifficultyDestroyedTargets { get; private set; }
+        [field: SerializeField] public float MinTargetScale { get; private set; }
+        [field: SerializeField] public float MaxTargetScale { get; private set; }
     }
 }

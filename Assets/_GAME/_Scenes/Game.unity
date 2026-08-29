@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 28458657}
   - component: {fileID: 28458656}
   m_Layer: 5
-  m_Name: Description
+  m_Name: ScoreLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -203,8 +203,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 46
+  m_fontSizeBase: 46
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -650,7 +650,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 4.6624384}
+  m_Offset: {x: 0, y: 5.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -660,7 +660,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 10.324877}
+  m_Size: {x: 1, y: 12}
   m_EdgeRadius: 0
 --- !u!50 &243403726
 Rigidbody2D:
@@ -2097,7 +2097,7 @@ GameObject:
   - component: {fileID: 803233115}
   - component: {fileID: 803233117}
   - component: {fileID: 803233116}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightWall (1)
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -2495,6 +2495,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.Screens.GameOverScreen
   _panelRect: {fileID: 901109268}
+  _scoreLabel: {fileID: 28458656}
+  _earnedCoinsLabel: {fileID: 1247331391}
   _animationDuration: 1
   _targetY: 0
   _replayButton: {fileID: 1502129591}
@@ -2842,7 +2844,7 @@ GameObject:
   - component: {fileID: 1247331392}
   - component: {fileID: 1247331391}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: EarnedCoinsLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3353,6 +3355,8 @@ MonoBehaviour:
   _initialCount: 6
   _spawnDelay: 1.5
   _maxSpawnedTargetsAtMoment: 3
+  _splittedTargetSpawnOffestX: 0.5
+  _splittedTargetSpawnOffestY: 0.5
 --- !u!1 &1502129589
 GameObject:
   m_ObjectHideFlags: 0
@@ -4125,8 +4129,8 @@ GameObject:
   - component: {fileID: 1805253507}
   - component: {fileID: 1805253509}
   - component: {fileID: 1805253510}
-  - component: {fileID: 1805253508}
   - component: {fileID: 1805253511}
+  - component: {fileID: 1805253512}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -4150,52 +4154,6 @@ Transform:
   - {fileID: 2051711013}
   m_Father: {fileID: 110618850}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &1805253508
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1805253506}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.0996933}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 8.24, y: 17.080486}
-    newSize: {x: 8.24, y: 17.080486}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 8.24, y: 16.8811}
-  m_EdgeRadius: 0
 --- !u!212 &1805253509
 SpriteRenderer:
   serializedVersion: 2
@@ -4272,7 +4230,7 @@ MonoBehaviour:
   _player: {fileID: 1805253506}
   _playerView: {fileID: 1805253509}
   _playerMoveSpeed: 2.5
-  _playerReloadTime: 2
+  _playerReloadTime: 0.75
   _playerShootForce: 20
   _playerSpriteChangeDelay: 0.35
   _idlePose: {fileID: 21300000, guid: 9159aa6ac2c9e2b48bebeb298e919070, type: 3}
@@ -4302,11 +4260,48 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!70 &1805253512
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1805253506}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 6, y: 17}
+  m_Direction: 0
 --- !u!1 &1809350158
 GameObject:
   m_ObjectHideFlags: 0
@@ -4452,9 +4447,14 @@ MonoBehaviour:
   _appearAnimationDuration: 0.35
   _hoverAnimationDuration: 0.5
   _pulseAnimationDuration: 1
+  _collaplseAnimationDuration: 0.55
+  _shakeScaleAnimationDuration: 0.15
   _yMoveOffset: 1
   _hoverLoopType: 1
   _hoverLoopCount: -1
+  _shakeScaleStrength: 0.08
+  _collapseInEase: 6
+  _collapseOutEase: 26
   _pulseTargetScale: 0.9
   _pulseLoopType: 1
   _pulseLoopsCount: -1
@@ -4636,7 +4636,7 @@ GameObject:
   - component: {fileID: 1873798128}
   - component: {fileID: 1873798130}
   - component: {fileID: 1873798129}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftWall (1)
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -4843,7 +4843,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 4.6624384}
+  m_Offset: {x: 0, y: 5.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4853,7 +4853,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 10.324877}
+  m_Size: {x: 1, y: 12}
   m_EdgeRadius: 0
 --- !u!50 &1934055198
 Rigidbody2D:
@@ -5001,6 +5001,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6611354990b548643a397b026d18e07a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Game.TargetSystem.TargetBallView
+  _appearAnimationDuration: 0.35
+  _hoverAnimationDuration: 0.5
+  _pulseAnimationDuration: 1
+  _collaplseAnimationDuration: 0.55
+  _shakeScaleAnimationDuration: 0.15
+  _yMoveOffset: 1
+  _hoverLoopType: 1
+  _hoverLoopCount: -1
+  _shakeScaleStrength: 0.08
+  _collapseInEase: 6
+  _collapseOutEase: 26
+  _pulseTargetScale: 0.9
+  _pulseLoopType: 1
+  _pulseLoopsCount: -1
+  _hoverAnimationEnabled: 0
+  _pulseAnimationEnabled: 0
   _targetSprite: {fileID: 0}
   _hpLabel: {fileID: 0}
   _impulseForce: 1.5

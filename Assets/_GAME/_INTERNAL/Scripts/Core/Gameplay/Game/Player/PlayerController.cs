@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Core.Gameplay.Game.TargetSystem;
+using Core.Services;
 using Cysharp.Threading.Tasks;
 using Extensions.GameObject;
 using UI.Other;
@@ -49,12 +50,13 @@ namespace Core.Gameplay.Game.Player
             _goToLeftButton.OnButtonClick += HandleLeftButtonClick;
             _goToRightButton.OnButtonClick += HandleRightButtonClick;
 
-            _ballProjectile.Init(_ballProjectileContainer);
+            _ballProjectile.Init(_ballProjectileContainer, GameServices.PlayerService.CurrentPlayerDamage);
+            _playerReloadTime = GameServices.PlayerService.CurrentPlayerReload;
             _ballProjectile.OnBallHitted += HandleHittedBall;
 
             _isPlayerAlive = true;
 
-            LoadCurrentPlayerSkin();
+            LoadCurrentPlayerSkin(GameServices.PlayerService.CurrentPlayerSkinId);
 
             ProjectileFlowAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
@@ -88,7 +90,7 @@ namespace Core.Gameplay.Game.Player
 #endif
         }
 
-        private void LoadCurrentPlayerSkin()
+        private void LoadCurrentPlayerSkin(int currentPlayerSkinId)
         {
             
         }

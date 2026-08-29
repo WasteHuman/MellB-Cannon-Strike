@@ -23,7 +23,7 @@
 
         #region Economy & Player Data
         public const float INITIAL_COINS = 1000f;
-        public const int INITIAL_PLAYER_DAMAGE = 1;
+        public const int INITIAL_PLAYER_DAMAGE = 2;
         public const int INITIAL_PLAYER_SKIN_ID = 0;
         public const float INITIAL_PLAYER_RELOAD = 2f;
         #endregion

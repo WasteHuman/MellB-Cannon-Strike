@@ -3,6 +3,7 @@ using UnityEngine;
 using UI.Other;
 using System;
 using DG.Tweening;
+using TMPro;
 
 namespace UI.Screens
 {
@@ -10,6 +11,8 @@ namespace UI.Screens
     {
         [Header("Refs")]
         [SerializeField] private RectTransform _panelRect;
+        [SerializeField] private TextMeshProUGUI _scoreLabel;
+        [SerializeField] private TextMeshProUGUI _earnedCoinsLabel;
 
         [Space(5), Header("Animation Setup")]
         [SerializeField] private float _animationDuration = 0.55f;
@@ -45,6 +48,15 @@ namespace UI.Screens
                 .DOAnchorPosY(_targetY, _animationDuration)
                 .SetEase(Ease.InOutBack)
                 .OnComplete(() => _panelRect.anchoredPosition = new(_panelRect.anchoredPosition.x, _targetY));
+        }
+
+        public void SetupScreen(int score, int earnedCoins)
+        {
+            if(_scoreLabel != null)
+                _scoreLabel.text = $"Score: {score}";
+            
+            if(_earnedCoinsLabel != null)
+                _earnedCoinsLabel.text = $"+{earnedCoins}";
         }
 
         private void HandleReplayButtonClick()

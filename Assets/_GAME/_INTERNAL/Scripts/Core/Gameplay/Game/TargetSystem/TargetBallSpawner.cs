@@ -22,6 +22,8 @@ namespace Core.Gameplay.Game.TargetSystem
         [Space(5), Header("Spawn Setup")]
         [SerializeField] private float _spawnDelay = 1f;
         [SerializeField] private int _maxSpawnedTargetsAtMoment = 5;
+        [SerializeField] private float _splittedTargetSpawnOffestX = 0.5f;
+        [SerializeField] private float _splittedTargetSpawnOffestY = 0.5f;
 
         private TargetBallSpritesConfig _spritesConfig;
 
@@ -34,6 +36,8 @@ namespace Core.Gameplay.Game.TargetSystem
         private readonly List<TargetBallView> _targets = new();
 
         private ObjectPool<TargetBallView> _targetsPool;
+
+        public event Action<int> OnTargetDestroyed;
 
         void OnDestroy()
         {
@@ -63,13 +67,19 @@ namespace Core.Gameplay.Game.TargetSystem
             _targets.AddRange(_targetsPool.GetFreeElements());
 
             for (int i = 0; i < _targets.Count; i++)
+            {
                 _targets[i].OnTargetDestroyed += HandleDestroyedTarget;
+                _targets[i].OnTargetSplitted += HandleSplittedTarget;
+            }
         }
 
         private void DestroySubscribes()
         {
             for (int i = 0; i < _targets.Count; i++)
+            {
                 _targets[i].OnTargetDestroyed -= HandleDestroyedTarget;
+                _targets[i].OnTargetSplitted -= HandleSplittedTarget;
+            }
         }
 
         private async UniTask AsyncTargetBallSpawn(CancellationToken token)
@@ -87,6 +97,7 @@ namespace Core.Gameplay.Game.TargetSystem
 
                 newTargetBall.Init(_difficultSystem.GetCurrentTargetsHP(), spawnPosition, impulseDirection);
                 newTargetBall.SetSprite(_spritesConfig.GetRandomSprite());
+                newTargetBall.SetScale(_difficultSystem.GetCurrentScale());
                 _currentSpawnedTargets++;
                 _nextSpawnLeft = !_nextSpawnLeft;
             }
@@ -98,6 +109,35 @@ namespace Core.Gameplay.Game.TargetSystem
 
             _currentSpawnedTargets = Mathf.Max(0, _currentSpawnedTargets - 1);
             _difficultSystem.RecalculateDifficult();
+
+            OnTargetDestroyed?.Invoke(view.InitialHp);
+        }
+
+        private void HandleSplittedTarget(TargetBallView view)
+        {
+            _targetsPool.ReturnToPool(view);
+
+            var leftBall = _targetsPool.GetFreeElement();
+            var rightBall = _targetsPool.GetFreeElement();
+
+            var leftImpulseDirection = Vector2.left;
+            var rightImpulseDirection = Vector2.right;
+
+            var leftBallPosition = new Vector2(view.transform.position.x + _splittedTargetSpawnOffestX, view.transform.position.y - _splittedTargetSpawnOffestY);
+            var rightBallPosition = new Vector2(view.transform.position.x - _splittedTargetSpawnOffestX, view.transform.position.y + _splittedTargetSpawnOffestY);
+
+            var splittedScale = view.OriginalScale * 0.5f;
+            var splittedHp = view.InitialHp / 2;
+
+            leftBall.Init(splittedHp, leftBallPosition, leftImpulseDirection);
+            leftBall.SetSprite(_spritesConfig.GetRandomSprite());
+            leftBall.SetScale(splittedScale);
+            leftBall.Appear(splittedScale);
+
+            rightBall.Init(splittedHp, rightBallPosition, rightImpulseDirection);
+            rightBall.SetSprite(_spritesConfig.GetRandomSprite());
+            rightBall.SetScale(splittedScale);
+            rightBall.Appear(splittedScale);
         }
     }
 }

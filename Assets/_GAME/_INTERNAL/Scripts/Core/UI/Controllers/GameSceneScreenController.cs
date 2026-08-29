@@ -20,6 +20,7 @@ namespace Core.UI.Controllers
             _gameOverScreen.OnHomeButtonClick -= HandleHomeButtonClick;
         }
 
+        public void SetupGameOverScreen(int score, int earnedCoins) => _gameOverScreen.SetupScreen(score, earnedCoins);
         public void OpenGameOverScreen() => _gameOverScreen.Open();
 
         private void HandleReplayButtonClick() => SceneManager.LoadSceneAsync(GameConstants.GAME);

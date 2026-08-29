@@ -1,6 +1,8 @@
 using Core.Common;
+using Core.Data;
 using Core.Gameplay.Game.Player;
 using Core.Gameplay.Game.TargetSystem;
+using Core.Services;
 using Core.UI.Controllers;
 using UI.Player;
 using UnityEngine;
@@ -19,6 +21,9 @@ namespace Core.Gameplay.Controllers
 
         public override void Enter()
         {
+            GameServices.PlayerService.ResetSessionScore();
+            GameServices.PlayerService.ResetEarnedSessionCoins();
+
             _playerController.OnPlayerLose += HandlePlayerLose;
         }
 
@@ -39,8 +44,16 @@ namespace Core.Gameplay.Controllers
 
         private void HandlePlayerLose()
         {
+            var earnedCoins = GameServices.PlayerService.SessionEarnedCoins;
+            var sessionScore = GameServices.PlayerService.SessionPlayerScore;
+
+            GameResult sessionResult = new(false, earnedCoins, sessionScore);
+            
             _targetSystemController.FreezeAllTargets();
+            _screenController.SetupGameOverScreen(sessionResult.Score, Mathf.RoundToInt(sessionResult.RewardCoins));
             _screenController.OpenGameOverScreen();
+
+            GameServices.GameSessionService.HandleEndedGame(sessionResult);
         }
     }
 }

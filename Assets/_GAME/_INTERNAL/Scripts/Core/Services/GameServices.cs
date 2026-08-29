@@ -9,6 +9,7 @@ namespace Core.Services
         public static PlayerService PlayerService { get; private set; }
         public static SaveService SaveService { get; private set; }
         public static EconomyService EconomyService { get; private set; }
+        public static GameSessionService GameSessionService { get; private set; }
 
         public static void InitializeAll(bool isDebug = false)
         {
@@ -20,6 +21,9 @@ namespace Core.Services
 
             EconomyService = new();
             EconomyService.Init(PlayerService.PlayerCoins);
+
+            GameSessionService = new();
+            GameSessionService.Init(EconomyService);
         }
 
         public static void SaveAll()

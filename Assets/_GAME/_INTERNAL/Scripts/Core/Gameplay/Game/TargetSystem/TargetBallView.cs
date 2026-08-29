@@ -1,11 +1,12 @@
 using System;
 using Core.Gameplay.Game.Player;
 using TMPro;
+using UI.Animations.Game;
 using UnityEngine;
 
 namespace Core.Gameplay.Game.TargetSystem
 {
-    public class TargetBallView : MonoBehaviour
+    public class TargetBallView : ObjectAnimations
     {
         [Header("Visual Setup")]
         [SerializeField] private SpriteRenderer _targetSprite;
@@ -16,15 +17,24 @@ namespace Core.Gameplay.Game.TargetSystem
         [SerializeField] private float _speed = 2.5f;
 
         private Rigidbody2D _rb;
+        private CircleCollider2D _collider;
 
         private int _currentHp;
+        private int _initialHp;
         private bool _isDestroyed;
 
-        public bool CanSplit => _currentHp > 4;
+        public bool CanSplit => _initialHp >= 4;
+        public int InitialHp => _initialHp;
+        public Vector3 OriginalScale => _originalScale;
 
         public event Action<TargetBallView> OnTargetDestroyed;
+        public event Action<TargetBallView> OnTargetSplitted;
 
-        void Awake() => _rb = GetComponent<Rigidbody2D>();
+        void Awake()
+        {
+            _rb = GetComponent<Rigidbody2D>();
+            _collider = GetComponent<CircleCollider2D>();
+        }
 
         void OnCollisionEnter2D(Collision2D collision)
         {
@@ -40,14 +50,19 @@ namespace Core.Gameplay.Game.TargetSystem
                 _rb.linearVelocity = _rb.linearVelocity.normalized * _speed;
         }
 
-        public void Init(int currentHp, Vector2 position, Vector2 impulseDirection)
+        public void Init(int initialHp, Vector2 position, Vector2 impulseDirection)
         {
-            _currentHp = currentHp;
+            _originalScale = transform.localScale;
+            _initialHp = initialHp;
+            _currentHp = initialHp;
             _isDestroyed = false;
             _hpLabel.text = $"{_currentHp}";
 
+            _rb.bodyType = RigidbodyType2D.Dynamic;
+
             _rb.linearVelocity = Vector2.zero;
             _rb.angularVelocity = 0f;
+            _collider.enabled = true;
 
             transform.position = position;
 
@@ -55,6 +70,12 @@ namespace Core.Gameplay.Game.TargetSystem
         }
 
         public void SetSprite(Sprite sprite) => _targetSprite.sprite = sprite;
+
+        public void SetScale(Vector3 scale)
+        {
+            transform.localScale = scale;
+            _originalScale = scale;
+        }
 
         public void FreezeTarget()
         {
@@ -69,22 +90,24 @@ namespace Core.Gameplay.Game.TargetSystem
 
             _currentHp -= damage;
 
-            if(_currentHp <= 0)
-            {
-                _rb.linearVelocity = Vector2.zero;
-                _rb.angularVelocity = 0f;
-                
-                _currentHp = 0;
-                _isDestroyed = true;
-                OnTargetDestroyed?.Invoke(this);
-            }
+            if(_currentHp <= 0 && !CanSplit)
+                HandleGoneHealth(OnTargetDestroyed);
+            else if(_currentHp <= 0 && CanSplit)
+                HandleGoneHealth(OnTargetSplitted);
 
             _hpLabel.text = $"{_currentHp}";
         }
 
-        private void SplitTarget()
+        private void HandleGoneHealth(Action<TargetBallView> onComplete)
         {
-            
+            _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.bodyType = RigidbodyType2D.Static;
+            _collider.enabled = false;
+                
+            _currentHp = 0;
+            _isDestroyed = true;
+            CollapseAnimation(() => onComplete?.Invoke(this));
         }
     }
 }
