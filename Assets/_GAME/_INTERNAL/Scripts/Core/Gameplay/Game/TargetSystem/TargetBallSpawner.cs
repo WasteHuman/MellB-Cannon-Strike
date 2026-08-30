@@ -126,15 +126,16 @@ namespace Core.Gameplay.Game.TargetSystem
             var leftBallPosition = new Vector2(view.transform.position.x + _splittedTargetSpawnOffestX, view.transform.position.y - _splittedTargetSpawnOffestY);
             var rightBallPosition = new Vector2(view.transform.position.x - _splittedTargetSpawnOffestX, view.transform.position.y + _splittedTargetSpawnOffestY);
 
-            var splittedScale = view.OriginalScale * 0.5f;
-            var splittedHp = view.InitialHp / 2;
+            var splittedScale = view.OriginalScale * 0.75f;
+            var leftSplittedHp = view.InitialHp / 2;
+            var rightSplittedHp = view.InitialHp - leftSplittedHp;
 
-            leftBall.Init(splittedHp, leftBallPosition, leftImpulseDirection);
+            leftBall.Init(leftSplittedHp, leftBallPosition, leftImpulseDirection);
             leftBall.SetSprite(_spritesConfig.GetRandomSprite());
             leftBall.SetScale(splittedScale);
             leftBall.Appear(splittedScale);
 
-            rightBall.Init(splittedHp, rightBallPosition, rightImpulseDirection);
+            rightBall.Init(rightSplittedHp, rightBallPosition, rightImpulseDirection);
             rightBall.SetSprite(_spritesConfig.GetRandomSprite());
             rightBall.SetScale(splittedScale);
             rightBall.Appear(splittedScale);

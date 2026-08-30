@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Core.SO.Debug
+namespace Core.SO.DebugConfigs
 {
     [CreateAssetMenu(menuName = "Configs/Debug/Debug Config", fileName = "DebugConfig")]
     public class DebugConfig : ScriptableObject

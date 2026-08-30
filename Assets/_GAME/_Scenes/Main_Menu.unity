@@ -641,9 +641,14 @@ MonoBehaviour:
   _appearAnimationDuration: 0.35
   _hoverAnimationDuration: 0.75
   _pulseAnimationDuration: 1
+  _collaplseAnimationDuration: 0.55
+  _shakeScaleAnimationDuration: 0.15
   _yMoveOffset: 10
   _hoverLoopType: 1
   _hoverLoopCount: -1
+  _shakeScaleStrength: 0.08
+  _collapseInEase: 6
+  _collapseOutEase: 26
   _pulseTargetScale: 0.9
   _pulseLoopType: 1
   _pulseLoopsCount: -1
@@ -1141,7 +1146,7 @@ MonoBehaviour:
   _onClick: 8
   _animations:
     _clickAnimationDuration: 0.05
-    _clickedScale: {x: 0.9, y: 0.9}
+    _clickedScale: {x: 0.85, y: 0.85}
     _clickRandomRotateOffset: 10
     _clickRotateAnimationDuration: 0.15
     _inRotationEase: 27
@@ -1155,7 +1160,7 @@ MonoBehaviour:
     _hoverLoopsCount: -1
     _usingPulseAnimation: 1
     _pulseAnimationDuration: 1.25
-    _pulseScaleFactor: {x: 1, y: 1}
+    _pulseScaleFactor: {x: 0.9, y: 0.9}
     _pulseLoopType: 1
     _pulseEase: 4
     _pulseLoopsCount: -1
@@ -1437,6 +1442,7 @@ GameObject:
   - component: {fileID: 555834557}
   - component: {fileID: 555834556}
   - component: {fileID: 555834555}
+  - component: {fileID: 555834558}
   m_Layer: 5
   m_Name: Player
   m_TagString: Untagged
@@ -1516,6 +1522,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555834553}
   m_CullTransparentMesh: 1
+--- !u!114 &555834558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 555834553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da49ed0acb164d1408e250d9ee911901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UI.Player.PlayerSkinsView
+  _playerSkin: {fileID: 555834556}
+  _playerBallSkin: {fileID: 214951408}
 --- !u!1 &602056960
 GameObject:
   m_ObjectHideFlags: 0
@@ -2586,16 +2606,16 @@ MonoBehaviour:
     _clickRotateAnimationDuration: 0.15
     _inRotationEase: 27
     _outRotationEase: 26
-    _useRandomRotationOnClick: 0
-    _usingHoverAnimation: 0
-    _hoverAnimationDuration: 1.25
-    _hoverOffset: {x: 0, y: 0}
+    _useRandomRotationOnClick: 1
+    _usingHoverAnimation: 1
+    _hoverAnimationDuration: 2.25
+    _hoverOffset: {x: 0, y: 15}
     _hoverLoopType: 1
     _hoverEase: 4
     _hoverLoopsCount: -1
     _usingPulseAnimation: 1
     _pulseAnimationDuration: 1
-    _pulseScaleFactor: {x: 1, y: 1}
+    _pulseScaleFactor: {x: 0.9, y: 0.9}
     _pulseLoopType: 1
     _pulseEase: 4
     _pulseLoopsCount: -1
@@ -4723,6 +4743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Controllers.MainSceneController
   _playerInfoPanelView: {fileID: 1656560127}
+  _playerSkinsView: {fileID: 555834558}
 --- !u!1 &1793326364
 GameObject:
   m_ObjectHideFlags: 0

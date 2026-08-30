@@ -17,6 +17,7 @@ namespace Core.Gameplay.Game.Player
 
         private Rigidbody2D _rb;
         private Transform _defaultPosition;
+        private SpriteRenderer _spriteRenderer;
         private bool _hasHit;
 
         public int CurrentDamage => _currentDamage;
@@ -36,13 +37,15 @@ namespace Core.Gameplay.Game.Player
             OnBallHitted = null;
         }
 
-        public void Init(Transform defaultPosition, int currentDamage = 1)
+        public void Init(Transform defaultPosition, Sprite ballSkin, int currentDamage = 1)
         {
             _originalScale = transform.localScale;
             _defaultPosition = defaultPosition;
             _rb = GetComponent<Rigidbody2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
 
-            // TODO: Damage будет браться из PlayerService
+            _spriteRenderer.sprite = ballSkin;
+
             _currentDamage = currentDamage;
         }
 

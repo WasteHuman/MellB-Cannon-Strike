@@ -4233,11 +4233,42 @@ MonoBehaviour:
   _playerReloadTime: 0.75
   _playerShootForce: 20
   _playerSpriteChangeDelay: 0.35
-  _idlePose: {fileID: 21300000, guid: 9159aa6ac2c9e2b48bebeb298e919070, type: 3}
-  _prepareToHitPose: {fileID: 21300000, guid: 69215acbc3e9f47498200eb0d8414053, type: 3}
-  _hitPose: {fileID: 21300000, guid: 9667fad735d750645a9eabf35165c282, type: 3}
+  _playerSkinDatas:
+  - SkinId: Skin_0
+    IdlePose: {fileID: 21300000, guid: 9159aa6ac2c9e2b48bebeb298e919070, type: 3}
+    HitPreparePose: {fileID: 21300000, guid: 69215acbc3e9f47498200eb0d8414053, type: 3}
+    HitPose: {fileID: 21300000, guid: 9667fad735d750645a9eabf35165c282, type: 3}
+  - SkinId: Skin_1
+    IdlePose: {fileID: 21300000, guid: 824585c05b711344497af380ee895e3a, type: 3}
+    HitPreparePose: {fileID: 21300000, guid: d6619043fc279f24cb86bba69b31f3d2, type: 3}
+    HitPose: {fileID: 21300000, guid: 72d447f77d603664dab9de04940061ec, type: 3}
+  - SkinId: Skin_2
+    IdlePose: {fileID: 21300000, guid: 3d3bcba9949ac124997c6d3c0ecc9f4c, type: 3}
+    HitPreparePose: {fileID: 21300000, guid: 73757e4136b67bd478d17262a20314d4, type: 3}
+    HitPose: {fileID: 21300000, guid: df5737f29c9a3604b8ac05317e0e068a, type: 3}
   _ballProjectile: {fileID: 1809350162}
   _ballProjectileContainer: {fileID: 2051711013}
+  _playerBallSkinDatas:
+  - SkinId: Ball_0
+    Skin: {fileID: 21300000, guid: fdb87a025a92e2640a2b5fcbda2c0cdd, type: 3}
+  - SkinId: Ball_1
+    Skin: {fileID: 21300000, guid: 56d8267ec5892184184f4c2bcae9c885, type: 3}
+  - SkinId: Ball_2
+    Skin: {fileID: 21300000, guid: 608bfafa50fb62b4c962841947e65e13, type: 3}
+  - SkinId: Ball_3
+    Skin: {fileID: 21300000, guid: 4bda55daaa1873741bb9ba2fecff6ebf, type: 3}
+  - SkinId: Ball_4
+    Skin: {fileID: 21300000, guid: 94e838e1fcd68e64e894036d5e726019, type: 3}
+  - SkinId: Ball_5
+    Skin: {fileID: 21300000, guid: 127380c302022d44284ae04c09fa0cbe, type: 3}
+  - SkinId: Ball_6
+    Skin: {fileID: 21300000, guid: 45d2b374cba532a4d963ceca24bfe835, type: 3}
+  - SkinId: Ball_7
+    Skin: {fileID: 21300000, guid: 49e459279425c994ebc11fcc66e9a247, type: 3}
+  - SkinId: Ball_8
+    Skin: {fileID: 21300000, guid: ff2df21eb03ca874e9347dd79b8f9073, type: 3}
+  - SkinId: Ball_9
+    Skin: {fileID: 21300000, guid: cdf67871fb7f9f64685a84bc8fd04d6e, type: 3}
 --- !u!50 &1805253511
 Rigidbody2D:
   serializedVersion: 5

@@ -1,4 +1,5 @@
-﻿using Core.Data;
+﻿using System;
+using Core.Data;
 
 namespace Core.Services.Player
 {
@@ -10,11 +11,15 @@ namespace Core.Services.Player
         private int _sessionEarnedCoins;
 
         public float PlayerCoins => _currentPlayerData.Coins;
-        public int CurrentPlayerSkinId => _currentPlayerData.CurrentPlayerSkinId;
+        public string CurrentPlayerSkinId => _currentPlayerData.CurrentPlayerSkinId;
+        public string CurrentPlayerBallSkinId => _currentPlayerData.CurrentPlayerBallSkinId;
         public int CurrentPlayerDamage => _currentPlayerData.CurrentPlayerDamage;
         public float CurrentPlayerReload => _currentPlayerData.CurrentPlayerReload;
         public int SessionPlayerScore => _sessionPlayerScore;
         public int SessionEarnedCoins => _sessionEarnedCoins;
+
+        public event Action<string> OnPlayerBallSkinChanged;
+        public event Action<string> OnPlayerSkinChanged;
 
         public void Init(PlayerData playerData)
         {
@@ -23,6 +28,22 @@ namespace Core.Services.Player
 
         public void DoublePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= 2;
         public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.25f;
+
+        public void ChangePlayerSkin(string skinId)
+        {
+            _currentPlayerData.CurrentPlayerSkinId = skinId;
+            OnPlayerSkinChanged?.Invoke(skinId);
+        }
+
+        public void ChangePlayerBallSkin(string skinId)
+        {
+            _currentPlayerData.CurrentPlayerBallSkinId = skinId;
+            OnPlayerBallSkinChanged?.Invoke(skinId);
+        }
+
+        public void AddSkinToPurchased(string skinId) => _currentPlayerData.PurchasedPlayerSkins.Add(skinId);
+        public void AddBallSkinToPurchased(string skinId) => _currentPlayerData.PurchasedPlayerBallSkins.Add(skinId);
+        public void AddUpgradeToPurchased(string upgradeId) => _currentPlayerData.PurchasedUpgrades.Add(upgradeId);
 
         public void ResetSessionScore() => _sessionPlayerScore = 0;
         public void ResetEarnedSessionCoins() => _sessionEarnedCoins = 0;

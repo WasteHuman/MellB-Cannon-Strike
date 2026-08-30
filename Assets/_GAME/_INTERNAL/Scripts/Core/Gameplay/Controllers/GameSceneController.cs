@@ -3,6 +3,7 @@ using Core.Data;
 using Core.Gameplay.Game.Player;
 using Core.Gameplay.Game.TargetSystem;
 using Core.Services;
+using Core.Services.Analytics;
 using Core.UI.Controllers;
 using UI.Player;
 using UnityEngine;
@@ -54,6 +55,7 @@ namespace Core.Gameplay.Controllers
             _screenController.OpenGameOverScreen();
 
             GameServices.GameSessionService.HandleEndedGame(sessionResult);
+            AnalyticsService.Instance.ReportGameLoss();
         }
     }
 }

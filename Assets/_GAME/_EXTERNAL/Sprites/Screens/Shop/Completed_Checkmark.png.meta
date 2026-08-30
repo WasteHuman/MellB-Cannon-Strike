@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d6619043fc279f24cb86bba69b31f3d2
+guid: f62ed57b82420d0428d1a1a6c3c8cc4f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5607164446775565011
-    second: pers2_pose2_0
+      213: -9194454323922001872
+    second: Completed_Checkmark_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -98,14 +98,14 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Android
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 48
+    textureFormat: -1
     textureCompression: 1
-    compressionQuality: 100
+    compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 1
+    overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
@@ -139,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pers2_pose2_0
+      name: Completed_Checkmark_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 75
-        width: 1223
-        height: 1562
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d252eb8c4a95f22b0800000000000000
-      internalID: -5607164446775565011
+      spriteID: 0302317b18cb66080800000000000000
+      internalID: -9194454323922001872
       vertices: []
       indices: 
       edges: []
@@ -164,7 +164,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      pers2_pose2_0: -5607164446775565011
+      Completed_Checkmark_0: -9194454323922001872
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

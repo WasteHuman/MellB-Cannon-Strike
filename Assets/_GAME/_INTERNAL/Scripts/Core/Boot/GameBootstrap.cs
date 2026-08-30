@@ -2,7 +2,7 @@
 using Core.Services.AdsService;
 using Core.Services.Analytics;
 using Core.Services.Audio;
-using Core.SO.Debug;
+using Core.SO.DebugConfigs;
 using Io.AppMetrica;
 using System.Collections;
 using UI.Loading;
@@ -29,6 +29,8 @@ namespace Core.Boot
 
             Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+            PlayerPrefs.DeleteKey(GameConstants.KEY_WELCOME_SCREEN_SHOWN);
 
             Run();
         }
@@ -76,7 +78,7 @@ namespace Core.Boot
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"[GlobalAction Bootstrap] Failed to run game: {ex.Message}");
+                Debug.LogError($"[GlobalAction Bootstrap] Failed to run game: {ex.Message}/{ex.StackTrace}");
             }
         }
 

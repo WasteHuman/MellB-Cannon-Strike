@@ -24,7 +24,7 @@ namespace UI.Screens
 
         private void HandleClaimBonusButtonClick()
         {
-            GameServices.EconomyService.AddCoins(2500f);
+            GameServices.EconomyService.AddCoins(1000f);
             OnBonusClaimed?.Invoke();
         }
     }

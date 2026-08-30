@@ -22,6 +22,8 @@ namespace UI.Controllers
         {
             if (PlayerPrefs.GetInt(GameConstants.KEY_WELCOME_SCREEN_SHOWN) == 1)
                 HandlePlayerReady();
+            else
+                _welcomeScreenView.Open();
         }
 
         private void OnDestroy()
@@ -37,6 +39,7 @@ namespace UI.Controllers
             PlayerPrefs.SetString(GameConstants.KEY_LAST_FREE_DAILY_BONUS_CLAIM, todayUtc);
 
             _dailyFreeBonusScreen.Close();
+            
             _mainMenuScreenView.Open();
         }
 
@@ -44,8 +47,20 @@ namespace UI.Controllers
         {
             Debug.Log($"[Main Scene Screen Controller] Player is ready.");
 
+            PlayerPrefs.SetInt(GameConstants.KEY_WELCOME_SCREEN_SHOWN, 1);
+
             _welcomeScreenView.Close();
-            _mainMenuScreenView.Open();
+
+            if (GameServices.EconomyService.RequestDailyFreeBonusAvailable())
+            {
+                _dailyFreeBonusScreen.Open();
+                _mainMenuScreenView.Open();
+            }
+            else
+            {
+                _dailyFreeBonusScreen.Close();
+                _mainMenuScreenView.Open();
+            }
         }
     }
 }

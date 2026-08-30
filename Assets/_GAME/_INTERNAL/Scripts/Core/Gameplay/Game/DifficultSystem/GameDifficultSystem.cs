@@ -44,6 +44,7 @@ namespace Core.Gameplay.Game.DifficultSystem
 
             int baseHp = Mathf.RoundToInt(Mathf.Lerp(_minTargetHp, _maxTargetHp, difficulty));
             int hp = baseHp + Random.Range(-_randomHpRange, _randomHpRange);
+            
             _currentTargetsHp = Mathf.Clamp(hp, _minTargetHp, _maxTargetHp);
 
             float scale = Mathf.Lerp(_minScale, _maxScale, difficulty);

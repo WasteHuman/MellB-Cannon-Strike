@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using Core.Data;
 using Core.Gameplay.Game.TargetSystem;
 using Core.Services;
 using Cysharp.Threading.Tasks;
@@ -27,15 +29,16 @@ namespace Core.Gameplay.Game.Player
         [SerializeField] private float _playerSpriteChangeDelay = 0.35f;
 
         [Space(5), Header("Player Pose Sprites Setup")]
-        [SerializeField] private Sprite _idlePose;
-        [SerializeField] private Sprite _prepareToHitPose;
-        [SerializeField] private Sprite _hitPose;
+        [SerializeField] private List<PlayerSkinData> _playerSkinDatas = new();
 
         [Space(5), Header("Ball Projectile Setup")]
         [SerializeField] private PlayerProjectile _ballProjectile;
         [SerializeField] private Transform _ballProjectileContainer;
+        [SerializeField] private List<PlayerBallSkinData> _playerBallSkinDatas = new();
 
         private PlayerState _state = PlayerState.Idle;
+        private PlayerSkinData _playerSkinData;
+        private Sprite _currentBallSkin;
 
         private UniTaskCompletionSource _hitProjectileSource;
         private bool _isPlayerAlive = true;
@@ -50,13 +53,15 @@ namespace Core.Gameplay.Game.Player
             _goToLeftButton.OnButtonClick += HandleLeftButtonClick;
             _goToRightButton.OnButtonClick += HandleRightButtonClick;
 
-            _ballProjectile.Init(_ballProjectileContainer, GameServices.PlayerService.CurrentPlayerDamage);
+            LoadCurrentPlayerSkins(
+                GameServices.PlayerService.CurrentPlayerSkinId, 
+                GameServices.PlayerService.CurrentPlayerBallSkinId);
+
+            _ballProjectile.Init(_ballProjectileContainer, _currentBallSkin, GameServices.PlayerService.CurrentPlayerDamage);
             _playerReloadTime = GameServices.PlayerService.CurrentPlayerReload;
             _ballProjectile.OnBallHitted += HandleHittedBall;
 
             _isPlayerAlive = true;
-
-            LoadCurrentPlayerSkin(GameServices.PlayerService.CurrentPlayerSkinId);
 
             ProjectileFlowAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
@@ -90,14 +95,46 @@ namespace Core.Gameplay.Game.Player
 #endif
         }
 
-        private void LoadCurrentPlayerSkin(int currentPlayerSkinId)
+        private void LoadCurrentPlayerSkins(string currentPlayerSkinId, string currentPlayerBallSkinId)
         {
-            
+            if (_playerSkinDatas == null || _playerSkinDatas.Count == 0)
+            {
+                Debug.LogWarning("[PlayerController] Player skin list is empty. Using empty skin data fallback.");
+                _playerSkinData = new PlayerSkinData();
+                return;
+            }
+
+            var playerSkin = _playerSkinDatas.Find(skinData => skinData != null && skinData.SkinId == currentPlayerSkinId);
+
+            if (playerSkin == null)
+            {
+                Debug.LogWarning($"[PlayerController] Skin id [{currentPlayerSkinId}] not found. Using first available skin.");
+                playerSkin = _playerSkinDatas[0];
+            }
+
+            _playerSkinData = playerSkin;
+
+            if (_playerBallSkinDatas == null || _playerBallSkinDatas.Count == 0)
+            {
+                Debug.LogWarning("[PlayerController] Ball skin list is empty. Leaving player ball skin unset.");
+                _currentBallSkin = null;
+                return;
+            }
+
+            var playerBallSkin = _playerBallSkinDatas.Find(skinData => skinData != null && skinData.SkinId == currentPlayerBallSkinId);
+
+            if (playerBallSkin == null)
+            {
+                Debug.LogWarning($"[PlayerController] Ball skin id [{currentPlayerBallSkinId}] not found. Using first available ball skin.");
+                playerBallSkin = _playerBallSkinDatas[0];
+            }
+
+            _currentBallSkin = playerBallSkin?.Skin;
         }
 
         private async UniTask ProjectileFlowAsync(CancellationToken token)
         {
-            while (!token.IsCancellationRequested && _isPlayerAlive)
+            while (_isPlayerAlive && !token.IsCancellationRequested)
             {
                 if (_state != PlayerState.Idle)
                 {
@@ -114,7 +151,7 @@ namespace Core.Gameplay.Game.Player
 
                 await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay * 0.5f), cancellationToken: token);
 
-                _playerView.sprite = _idlePose;
+                _playerView.sprite = _playerSkinData.IdlePose;
 
                 await ProcessProjectileHitAsync(token);
 
@@ -136,9 +173,9 @@ namespace Core.Gameplay.Game.Player
         private async UniTask PlayerHitProcessAsync(CancellationToken token)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay), cancellationToken: token);
-            _playerView.sprite = _prepareToHitPose;
+            _playerView.sprite = _playerSkinData.HitPreparePose;
             await UniTask.Delay(TimeSpan.FromSeconds(_playerSpriteChangeDelay), cancellationToken: token);
-            _playerView.sprite = _hitPose;
+            _playerView.sprite = _playerSkinData.HitPose;
 
             return;
         }

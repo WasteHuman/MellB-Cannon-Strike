@@ -94,8 +94,10 @@ namespace UI.Animations.GameScreen
         {
             _hoverTween?.Kill();
 
+            Vector2 hoverTargetPosition = _rectTransform.anchoredPosition + _hoverOffset;
+
             _hoverTween = _rectTransform
-                .DOAnchorPos(_hoverOffset, _hoverAnimationDuration)
+                .DOAnchorPos(hoverTargetPosition, _hoverAnimationDuration)
                 .SetEase(_hoverEase)
                 .SetLoops(_hoverLoopsCount, _hoverLoopType);
         }
