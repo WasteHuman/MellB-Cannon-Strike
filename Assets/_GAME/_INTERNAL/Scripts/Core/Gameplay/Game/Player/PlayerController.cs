@@ -14,6 +14,9 @@ namespace Core.Gameplay.Game.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        private const float MIN_X = -3.2f;
+        private const float MAX_X = 3.2f;
+
         [Header("Move Buttons Setup")]
         [SerializeField] private ActionButton _goToLeftButton;
         [SerializeField] private ActionButton _goToRightButton;
@@ -113,6 +116,7 @@ namespace Core.Gameplay.Game.Player
             }
 
             _playerSkinData = playerSkin;
+            _playerView.sprite = playerSkin.IdlePose;
 
             if (_playerBallSkinDatas == null || _playerBallSkinDatas.Count == 0)
             {
@@ -199,8 +203,12 @@ namespace Core.Gameplay.Game.Player
             if(!_isPlayerAlive)
                 return;
 
-            Vector3 movement = new(-1f, 0f, 0f);
-            _player.transform.position += _playerMoveSpeed * Time.deltaTime * movement;
+            var nextX = _player.transform.position.x - _playerMoveSpeed * Time.deltaTime;
+            _player.transform.position = new Vector3(
+                Mathf.Max(nextX, MIN_X),
+                _player.transform.position.y,
+                _player.transform.position.z
+            );
         }
 
         private void HandleRightButtonClick()
@@ -208,8 +216,12 @@ namespace Core.Gameplay.Game.Player
             if(!_isPlayerAlive)
                 return;
 
-            Vector3 movement = new(1f, 0f, 0f);
-            _player.transform.position += _playerMoveSpeed * Time.deltaTime * movement;
+            var nextX = _player.transform.position.x + _playerMoveSpeed * Time.deltaTime;
+            _player.transform.position = new Vector3(
+                Mathf.Min(nextX, MAX_X),
+                _player.transform.position.y,
+                _player.transform.position.z
+            );
         }
 
         private void HandleHittedBall() => _hitProjectileSource?.TrySetResult();

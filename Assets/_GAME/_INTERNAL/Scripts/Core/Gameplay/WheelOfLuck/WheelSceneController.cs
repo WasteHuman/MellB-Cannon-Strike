@@ -196,14 +196,14 @@ namespace Core.WheelOfLuck
         private void HandleSpinClicked()
         {
             PrepareAndStartSpin(() => ClaimWithoutAd());
+            _state.FreeSpins = Mathf.Max(0, _state.FreeSpins - 1);
         }
 
         private void FinishSpin(Action onComplete)
         {
             _state.IsSpinning = false;
-            _state.FreeSpins = Mathf.Max(0, _state.FreeSpins - 1);
 
-            if (_config.HasCooldown)
+            if (_config.HasCooldown && _state.FreeSpins == 0)
                 _state.NextAvailableUtc = DateTimeOffset.UtcNow + _config.Cooldown;
 
             _persistence.Save(_state);
