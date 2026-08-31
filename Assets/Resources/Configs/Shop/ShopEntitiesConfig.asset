@@ -26,10 +26,10 @@ MonoBehaviour:
     EntityCost: 1500
     Type: 1
     EntityDescription: 
-    IsPurchased: 1
+    IsPurchased: 0
   - EntityID: Skin_2
     EntityItemSprite: {fileID: 21300000, guid: 21f5d565b932ffe49ae26ce249e6aa62, type: 3}
-    EntitySkinSprite: {fileID: 21300000, guid: 72d447f77d603664dab9de04940061ec, type: 3}
+    EntitySkinSprite: {fileID: 21300000, guid: 3d3bcba9949ac124997c6d3c0ecc9f4c, type: 3}
     EntityCost: 2500
     Type: 1
     EntityDescription: 
@@ -48,14 +48,14 @@ MonoBehaviour:
     EntityCost: 250
     Type: 1
     EntityDescription: 
-    IsPurchased: 1
+    IsPurchased: 0
   - EntityID: Ball_2
     EntityItemSprite: {fileID: 21300000, guid: 608bfafa50fb62b4c962841947e65e13, type: 3}
     EntitySkinSprite: {fileID: 0}
     EntityCost: 350
     Type: 1
     EntityDescription: 
-    IsPurchased: 1
+    IsPurchased: 0
   - EntityID: Ball_3
     EntityItemSprite: {fileID: 21300000, guid: 4bda55daaa1873741bb9ba2fecff6ebf, type: 3}
     EntitySkinSprite: {fileID: 0}
@@ -112,11 +112,11 @@ MonoBehaviour:
     EntityCost: 1000
     Type: 0
     EntityDescription: Double YOUR damage!
-    IsPurchased: 1
+    IsPurchased: 0
   - EntityID: Reload_Upgrade
     EntityItemSprite: {fileID: 21300000, guid: e51bdc28f35664441883dc0f6b594c39, type: 3}
     EntitySkinSprite: {fileID: 0}
     EntityCost: 1500
     Type: 0
     EntityDescription: Reduce YOUR reload!
-    IsPurchased: 1
+    IsPurchased: 0

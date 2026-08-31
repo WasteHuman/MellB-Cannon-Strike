@@ -1,22 +1,36 @@
 ﻿using DG.Tweening;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI.Animations.Game
 {
     public abstract class ObjectAnimations : MonoBehaviour
     {
         [Header("Animations Duration Setup")]
-        [SerializeField] private float _appearAnimationDuration = 0.35f;
+        [SerializeField] private float _scaleAppearAnimationDuration = 0.35f;
+        [SerializeField] private float _moveAppearAnimationDuration = 1.75f;
+        [SerializeField] private float _fadeAppearAnimtionDuration = 1.25f;
         [SerializeField] private float _hoverAnimationDuration = 0.5f;
         [SerializeField] private float _pulseAnimationDuration = 1f;
         [SerializeField] private float _collaplseAnimationDuration = 0.55f;
         [SerializeField] private float _shakeScaleAnimationDuration = 0.15f;
 
+        [Space(5), Header("Object Refs")]
+        [SerializeField] private RectTransform _objectRect;
+
         [Space(5), Header("Hover Animation Setup")]
         [SerializeField] private float _yMoveOffset = 1.0f;
         [SerializeField] private LoopType _hoverLoopType = LoopType.Yoyo;
         [SerializeField, Tooltip("Set -1 for infinite loops count")] private int _hoverLoopCount = -1;
+
+        [Space(5), Header("Move Appear Animation Setup")]
+        [SerializeField] private Vector3 _targetPosition;
+        [SerializeField] private Ease _moveAppearInEase = Ease.OutBack;
+        [SerializeField] private Ease _moveAppearOutEase = Ease.InBack;
+
+        [Space(5), Header("Fade Appear Animation Setup")]
+        [SerializeField] private CanvasGroup _targetCanvasGroup;
 
         [Space(5), Header("Collapse Animation Setup")]
         [SerializeField] private float _shakeScaleStrength = 0.08f;
@@ -33,9 +47,12 @@ namespace UI.Animations.Game
         [SerializeField] private bool _pulseAnimationEnabled = false;
 
         protected Vector3 _originalScale;
+        protected Vector3 _originalPosition;
 
-        private Tween _appearTween;
-        private Tween _disappearTween;
+        private Tween _scaleAppearTween;
+        private Tween _fadeAppearTween;
+        private Tween _moveAppearTween;
+        private Tween _scaleDisappearTween;
         private Tween _hoverTween;
         private Tween _pulseTween;
         private Tween _shakeScaleTween;
@@ -53,17 +70,21 @@ namespace UI.Animations.Game
         private void OnDisable()
         {
             _hoverTween?.Kill();
-            _appearTween?.Kill();
-            _disappearTween?.Kill();
+            _scaleAppearTween?.Kill();
+            _scaleDisappearTween?.Kill();
             _pulseTween?.Kill();
+            _moveAppearTween?.Kill();
+            _fadeAppearTween?.Kill();
         }
 
         private void OnDestroy()
         {
             _hoverTween?.Kill();
-            _appearTween?.Kill();
-            _disappearTween?.Kill();
+            _scaleAppearTween?.Kill();
+            _scaleDisappearTween?.Kill();
             _pulseTween?.Kill();
+            _moveAppearTween?.Kill();
+            _fadeAppearTween?.Kill();
         }
 
         private void HoverAnimation()
@@ -92,17 +113,17 @@ namespace UI.Animations.Game
                 .SetLoops(_pulseLoopsCount, _pulseLoopType);
         }
 
-        public void Appear(Vector3 originalScale, Action onComplete = null)
+        public void ScaleAppear(Vector3 originalScale, Action onComplete = null)
         {
             transform.localScale = Vector3.zero;
             gameObject.SetActive(true);
             _originalScale = originalScale;
 
-            _appearTween?.Kill();
-            _disappearTween?.Kill();
+            _scaleAppearTween?.Kill();
+            _scaleDisappearTween?.Kill();
 
-            _appearTween = transform
-                .DOScale(originalScale, _appearAnimationDuration)
+            _scaleAppearTween = transform
+                .DOScale(originalScale, _scaleAppearAnimationDuration)
                 .SetEase(Ease.InOutBounce)
                 .OnComplete(() =>
                 {
@@ -111,14 +132,14 @@ namespace UI.Animations.Game
                 });
         }
 
-        public void Disappear(Action onComplete = null)
+        public void ScaleDisappear(Action onComplete = null)
         {
-            _appearTween?.Kill();
-            _disappearTween?.Kill();
+            _scaleAppearTween?.Kill();
+            _scaleDisappearTween?.Kill();
 
-            float disappearAnimationDuration = _appearAnimationDuration * 0.25f;
+            float disappearAnimationDuration = _scaleAppearAnimationDuration * 0.25f;
 
-            _disappearTween = transform
+            _scaleDisappearTween = transform
                 .DOScale(Vector3.zero, disappearAnimationDuration)
                 .SetEase(Ease.InOutBounce)
                 .OnComplete(() =>
@@ -157,6 +178,53 @@ namespace UI.Animations.Game
                 transform.localScale = _originalScale;
                 onComplete?.Invoke();
             });
+        }
+
+        public void MoveAppearAnimation(bool appear = true, Action onComplete = null)
+        {
+            if(_objectRect == null)
+                return;
+
+            _moveAppearTween?.Kill();
+
+            if (appear)
+            {
+                _moveAppearTween = _objectRect
+                .DOAnchorPos(_targetPosition, _moveAppearAnimationDuration)
+                .SetEase(_moveAppearInEase);
+            }
+            else
+            {
+                _moveAppearTween = _objectRect
+                .DOAnchorPos(_originalPosition, _moveAppearAnimationDuration)
+                .SetEase(_moveAppearOutEase);
+            }
+
+            _moveAppearTween.OnComplete(() =>
+            {
+                if(appear)
+                    _objectRect.transform.position = _targetPosition;
+                else
+                    _objectRect.transform.position = _originalPosition;
+
+                onComplete?.Invoke();
+            });
+        }
+
+        public void FadeAppearAnimation(float targetAplha = 1f, Action onCompleted = null)
+        {
+            if(!_targetCanvasGroup.gameObject.activeSelf)
+                _targetCanvasGroup.gameObject.SetActive(true);
+
+            _fadeAppearTween?.Kill();
+
+            _fadeAppearTween = _targetCanvasGroup
+                .DOFade(targetAplha, _fadeAppearAnimtionDuration)
+                .OnComplete(() =>
+                {
+                    _targetCanvasGroup.alpha = targetAplha;
+                    onCompleted?.Invoke();
+                });
         }
     }
 }

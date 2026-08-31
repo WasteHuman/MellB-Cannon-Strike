@@ -53,6 +53,8 @@ namespace Core.WheelOfLuck
                 return;
 
             _startSpinButton.Interactable = interactable;
+            if(interactable)
+                _cooldownText.gameObject.SetActive(false);
 
             if (!interactable)
             {
@@ -71,6 +73,9 @@ namespace Core.WheelOfLuck
         {
             if (_cooldownText == null)
                 return;
+
+            if(!_cooldownText.gameObject.activeSelf)
+                _cooldownText.gameObject.SetActive(true);
 
             _cooldownText.text = FormatTimeSpan(remaining);
         }

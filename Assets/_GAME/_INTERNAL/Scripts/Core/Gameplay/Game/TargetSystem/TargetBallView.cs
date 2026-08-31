@@ -11,6 +11,7 @@ namespace Core.Gameplay.Game.TargetSystem
         [Header("Visual Setup")]
         [SerializeField] private SpriteRenderer _targetSprite;
         [SerializeField] private TextMeshPro _hpLabel;
+        [SerializeField] private ParticleSystem _destroyVfx;
 
         [Space(5), Header("Physics Setup")]
         [SerializeField] private float _impulseForce = 1.5f;
@@ -89,6 +90,7 @@ namespace Core.Gameplay.Game.TargetSystem
                 return;
 
             _currentHp -= damage;
+            Debug.Log($"[Target Ball View] Damage: {damage}");
 
             if(_currentHp <= 0 && !CanSplit)
                 HandleGoneHealth(OnTargetDestroyed);
@@ -104,10 +106,24 @@ namespace Core.Gameplay.Game.TargetSystem
             _rb.angularVelocity = 0f;
             _rb.bodyType = RigidbodyType2D.Static;
             _collider.enabled = false;
-                
+
+            PlayDestroyVfx();
+
             _currentHp = 0;
             _isDestroyed = true;
             CollapseAnimation(() => onComplete?.Invoke(this));
+        }
+
+        private void PlayDestroyVfx()
+        {
+            if (_destroyVfx == null)
+                return;
+
+            _destroyVfx.transform.position = transform.position;
+            _destroyVfx.transform.localScale = transform.localScale;
+            _destroyVfx.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            _destroyVfx.Clear();
+            _destroyVfx.Play();
         }
     }
 }

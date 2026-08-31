@@ -1,4 +1,5 @@
-﻿using Core.Gameplay;
+using System.Collections.Generic;
+using Core.Gameplay;
 using Core.Services.Player;
 using Core.Services.SaveSystem;
 using Core.Services.Shop;
@@ -42,7 +43,25 @@ namespace Core.Services
 
         public static void SaveAll()
         {
-            SaveService.PlayerData.Coins = EconomyService.GetCoinsBalance();
+            if (SaveService == null || SaveService.PlayerData == null)
+                return;
+
+            if (PlayerService != null)
+            {
+                var playerData = PlayerService.GetData();
+                SaveService.PlayerData.CurrentPlayerSkinId = playerData.CurrentPlayerSkinId;
+                SaveService.PlayerData.CurrentPlayerBallSkinId = playerData.CurrentPlayerBallSkinId;
+                SaveService.PlayerData.CurrentPlayerDamage = playerData.CurrentPlayerDamage;
+                SaveService.PlayerData.CurrentPlayerReload = playerData.CurrentPlayerReload;
+                SaveService.PlayerData.PurchasedPlayerSkins = new List<string>(playerData.PurchasedPlayerSkins);
+                SaveService.PlayerData.PurchasedPlayerBallSkins = new List<string>(playerData.PurchasedPlayerBallSkins);
+                SaveService.PlayerData.PurchasedUpgrades = new List<string>(playerData.PurchasedUpgrades);
+            }
+
+            if (EconomyService != null)
+                SaveService.PlayerData.Coins = EconomyService.GetCoinsBalance();
+
+            SaveService.PlayerData.EnsureValidState();
             SaveService.SavePlayerData();
         }
     }

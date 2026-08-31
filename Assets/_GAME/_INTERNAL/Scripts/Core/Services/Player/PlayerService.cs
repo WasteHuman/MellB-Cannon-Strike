@@ -41,9 +41,23 @@ namespace Core.Services.Player
             OnPlayerBallSkinChanged?.Invoke(skinId);
         }
 
-        public void AddSkinToPurchased(string skinId) => _currentPlayerData.PurchasedPlayerSkins.Add(skinId);
-        public void AddBallSkinToPurchased(string skinId) => _currentPlayerData.PurchasedPlayerBallSkins.Add(skinId);
-        public void AddUpgradeToPurchased(string upgradeId) => _currentPlayerData.PurchasedUpgrades.Add(upgradeId);
+        public void AddSkinToPurchased(string skinId)
+        {
+            if (!_currentPlayerData.PurchasedPlayerSkins.Contains(skinId))
+                _currentPlayerData.PurchasedPlayerSkins.Add(skinId);
+        }
+
+        public void AddBallSkinToPurchased(string skinId)
+        {
+            if (!_currentPlayerData.PurchasedPlayerBallSkins.Contains(skinId))
+                _currentPlayerData.PurchasedPlayerBallSkins.Add(skinId);
+        }
+
+        public void AddUpgradeToPurchased(string upgradeId)
+        {
+            if (!_currentPlayerData.PurchasedUpgrades.Contains(upgradeId))
+                _currentPlayerData.PurchasedUpgrades.Add(upgradeId);
+        }
 
         public void ResetSessionScore() => _sessionPlayerScore = 0;
         public void ResetEarnedSessionCoins() => _sessionEarnedCoins = 0;

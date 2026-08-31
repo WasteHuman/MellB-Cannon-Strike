@@ -17,7 +17,7 @@ MonoBehaviour:
   _spinDuration: 4
   _minFullRotations: 4
   _initialFreeSpins: 1
-  _autoGrantFreeSpinWhenAvailable: 0
+  _autoGrantFreeSpinWhenAvailable: 1
   _hasCooldown: 1
   _cooldownHours: 12
   _requiresEnergy: 0

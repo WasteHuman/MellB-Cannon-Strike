@@ -50,8 +50,8 @@ namespace Core.Gameplay.Game.Player
         }
 
         public void BallAtTheKillzone() => HitBall();
-        public void Show() => Appear(_originalScale);
-        public void Hide() => Disappear(() => gameObject.SetActive(false));
+        public void Show() => ScaleAppear(_originalScale);
+        public void Hide() => ScaleDisappear(() => gameObject.SetActive(false));
 
         public void ShootProjectile(float shootForce)
         {

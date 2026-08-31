@@ -1,5 +1,6 @@
 using Core.Gameplay.Game.DifficultSystem;
 using Core.Services;
+using DG.Tweening;
 using SO.Game;
 using SO.Game.DifficultSystem;
 using UnityEngine;

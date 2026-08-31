@@ -638,14 +638,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dce96a26111a9cb42bdd0de6378350f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.Animations.DailyScreen.GIftObjectAnimations
-  _appearAnimationDuration: 0.35
+  _scaleAppearAnimationDuration: 0.35
+  _moveAppearAnimationDuration: 1.75
+  _fadeAppearAnimtionDuration: 1.25
   _hoverAnimationDuration: 0.75
   _pulseAnimationDuration: 1
   _collaplseAnimationDuration: 0.55
   _shakeScaleAnimationDuration: 0.15
+  _objectRect: {fileID: 0}
   _yMoveOffset: 10
   _hoverLoopType: 1
   _hoverLoopCount: -1
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _moveAppearInEase: 27
+  _moveAppearOutEase: 26
+  _targetCanvasGroup: {fileID: 0}
   _shakeScaleStrength: 0.08
   _collapseInEase: 6
   _collapseOutEase: 26
@@ -2614,7 +2621,7 @@ MonoBehaviour:
     _hoverEase: 4
     _hoverLoopsCount: -1
     _usingPulseAnimation: 1
-    _pulseAnimationDuration: 1
+    _pulseAnimationDuration: 2.25
     _pulseScaleFactor: {x: 0.9, y: 0.9}
     _pulseLoopType: 1
     _pulseEase: 4

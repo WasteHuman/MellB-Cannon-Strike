@@ -34,6 +34,7 @@ namespace Core.Gameplay
         /// Запросить актуальность ежедневного бонуса
         /// </summary>
         public bool RequestDailyFreeBonusAvailable() => _isDailyFreeBonusAvailable;
+        public void DailyBonusClaimed() => _isDailyFreeBonusAvailable = false;
 
         /// <summary>
         /// Добавить средства (выигрыш, бонус)

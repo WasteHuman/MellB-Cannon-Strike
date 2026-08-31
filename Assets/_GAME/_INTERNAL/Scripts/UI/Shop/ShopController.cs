@@ -93,7 +93,7 @@ namespace UI.Shop
                 bool isSelected = GameServices.PlayerService.CurrentPlayerBallSkinId == ballData.EntityID;
 
                 ballView.Init(
-                    ballData.EntityItemSprite, 
+                    _config.GetPlayerBallSkinById(ballData.EntityID), 
                     ballData.EntityID, 
                     ballData.EntityDescription, 
                     ballData.EntityCost, 
@@ -116,7 +116,7 @@ namespace UI.Shop
                 bool isSelected = GameServices.PlayerService.CurrentPlayerSkinId == skinData.EntityID;
 
                 skinView.Init(
-                    skinData.EntityItemSprite, 
+                    _config.GetItemSpriteById(skinData.EntityID), 
                     skinData.EntityID, 
                     skinData.EntityDescription, 
                     skinData.EntityCost, 
@@ -136,7 +136,7 @@ namespace UI.Shop
                 var upgradeData = upgradeEntities[i];
 
                 upgradeView.Init(
-                    upgradeData.EntityItemSprite, 
+                    _config.GetPlayerUpgradeSpriteById(upgradeData.EntityID), 
                     upgradeData.EntityID, 
                     upgradeData.EntityDescription, 
                     upgradeData.EntityCost, 
@@ -147,25 +147,36 @@ namespace UI.Shop
 
         private void HandlePurchasedItem(string id)
         {
-            if (id.Contains("Skin"))
+            if (id.Contains("Skin") && !id.Contains("Ball"))
             {
-                _shopService.BuyPlayerSkin(id);
                 var selectedItem = _playerSkinViews.Find(skin => skin.ItemId == id);
-                selectedItem.UpdateToPurchasedItemView();
+                if (selectedItem == null)
+                    return;
+
+                if (_shopService.BuyPlayerSkin(id))
+                    selectedItem.UpdateToPurchasedItemView();
+                return;
             }
 
             if (id.Contains("Ball"))
             {
-                _shopService.BuyPlayerBallSkin(id);
                 var selectedItem = _ballSkinViews.Find(skin => skin.ItemId == id);
-                selectedItem.UpdateToPurchasedItemView();
+                if (selectedItem == null)
+                    return;
+
+                if (_shopService.BuyPlayerBallSkin(id))
+                    selectedItem.UpdateToPurchasedItemView();
+                return;
             }
 
             if (id.Contains("Upgrade"))
             {
-                _shopService.BuyPlayerUpgrade(id);
                 var selectedItem = _upgradeViews.Find(skin => skin.ItemId == id);
-                selectedItem.UpdateToPurchasedItemView();
+                if (selectedItem == null)
+                    return;
+
+                if (_shopService.BuyPlayerUpgrade(id))
+                    selectedItem.UpdateToPurchasedItemView();
             }
         }
 

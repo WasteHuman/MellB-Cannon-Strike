@@ -116,6 +116,7 @@ namespace Core.Gameplay.Game.TargetSystem
         private void HandleSplittedTarget(TargetBallView view)
         {
             _targetsPool.ReturnToPool(view);
+            OnTargetDestroyed?.Invoke(view.InitialHp);
 
             var leftBall = _targetsPool.GetFreeElement();
             var rightBall = _targetsPool.GetFreeElement();
@@ -133,12 +134,12 @@ namespace Core.Gameplay.Game.TargetSystem
             leftBall.Init(leftSplittedHp, leftBallPosition, leftImpulseDirection);
             leftBall.SetSprite(_spritesConfig.GetRandomSprite());
             leftBall.SetScale(splittedScale);
-            leftBall.Appear(splittedScale);
+            leftBall.ScaleAppear(splittedScale);
 
             rightBall.Init(rightSplittedHp, rightBallPosition, rightImpulseDirection);
             rightBall.SetSprite(_spritesConfig.GetRandomSprite());
             rightBall.SetScale(splittedScale);
-            rightBall.Appear(splittedScale);
+            rightBall.ScaleAppear(splittedScale);
         }
     }
 }

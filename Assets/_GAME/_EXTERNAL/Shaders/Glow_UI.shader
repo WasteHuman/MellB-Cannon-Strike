@@ -7,6 +7,13 @@ Shader "UI/Glow"
         _Roundness ("Corner Roundness", Range(0, 0.5)) = 0.2
         _GlowSpread ("Glow Spread", Range(0.01, 2.0)) = 0.5
         _GlowPower ("Glow Intensity", Range(0.1, 10.0)) = 2.0
+
+        _Stencil ("Stencil ID", Float) = 0
+        _StencilComp ("Stencil Comparison", Float) = 8
+        _StencilOp ("Stencil Operation", Float) = 0
+        _StencilWriteMask ("Stencil Write Mask", Float) = 255
+        _StencilReadMask ("Stencil Read Mask", Float) = 255
+        _ColorMask ("Color Mask", Float) = 15
     }
 
     SubShader
@@ -29,10 +36,22 @@ Shader "UI/Glow"
         Pass
         {
             Name "Default"
+            Stencil
+            {
+                Ref [_Stencil]
+                Comp [_StencilComp]
+                Pass [_StencilOp]
+                ReadMask [_StencilReadMask]
+                WriteMask [_StencilWriteMask]
+            }
+            ColorMask [_ColorMask]
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.0
+            #pragma multi_compile __ UNITY_UI_CLIP_RECT
+            #pragma multi_compile __ UNITY_UI_ALPHACLIP
 
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
@@ -60,6 +79,12 @@ Shader "UI/Glow"
             float _GlowSpread;
             float _GlowPower;
             float4 _ClipRect;
+            float _Stencil;
+            float _StencilComp;
+            float _StencilOp;
+            float _StencilWriteMask;
+            float _StencilReadMask;
+            float _ColorMask;
 
             v2f vert(appdata_t v)
             {
@@ -100,11 +125,19 @@ Shader "UI/Glow"
                 // Собираем финальный альфа-канал
                 float alpha = saturate(boxShape + glow * _GlowPower);
                 
-                // Применяем обрезку по Rect Mask (чтобы панель резалась внутри Scroll View)
-                alpha *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
-                
+                // Применяем обрезку по Rect Mask (чтобы панель резалась внутри Scroll View / Mask)
+                #if UNITY_UI_CLIP_RECT
+                    alpha *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
+                #endif
+
                 // Применяем прозрачность канваса (CrossFade, альфа группы и т.д.)
                 alpha *= IN.color.a;
+
+                // При необходимости можно срезать полностью прозрачные пиксели,
+                // чтобы маска и альфа работали корректно в UGUI.
+                #if UNITY_UI_ALPHACLIP
+                    clip(alpha - 0.001);
+                #endif
 
                 // Микс между цветом свечения и цветом ядра
                 float3 finalColor = _GlowColor.rgb * (glow * _GlowPower + boxShape);

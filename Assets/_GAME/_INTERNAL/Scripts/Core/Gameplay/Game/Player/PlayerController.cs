@@ -17,17 +17,12 @@ namespace Core.Gameplay.Game.Player
         private const float MIN_X = -3.2f;
         private const float MAX_X = 3.2f;
 
-        [Header("Move Buttons Setup")]
-        [SerializeField] private ActionButton _goToLeftButton;
-        [SerializeField] private ActionButton _goToRightButton;
-
-        [Space(5), Header("Player Setup")]
+        [Header("Player Setup")]
         [SerializeField] private GameObject _player;
         [SerializeField] private SpriteRenderer _playerView;
         [SerializeField] private float _playerMoveSpeed = 5f;
         [SerializeField] private float _playerReloadTime = 2f;
         [SerializeField] private float _playerShootForce = 5f;
-
         [Tooltip("Using for setup delay between Player Pose sprites")]
         [SerializeField] private float _playerSpriteChangeDelay = 0.35f;
 
@@ -45,19 +40,18 @@ namespace Core.Gameplay.Game.Player
 
         private UniTaskCompletionSource _hitProjectileSource;
         private bool _isPlayerAlive = true;
+        private bool _isTouchDragging;
+        private bool _isGameplayStarted;
 
         public event Action OnPlayerLose;
 
         public void Initialize()
         {
-            _goToLeftButton.IsUseHeldFunc = true;
-            _goToRightButton.IsUseHeldFunc = true;
-
-            _goToLeftButton.OnButtonClick += HandleLeftButtonClick;
-            _goToRightButton.OnButtonClick += HandleRightButtonClick;
+            _isGameplayStarted = false;
+            _isTouchDragging = false;
 
             LoadCurrentPlayerSkins(
-                GameServices.PlayerService.CurrentPlayerSkinId, 
+                GameServices.PlayerService.CurrentPlayerSkinId,
                 GameServices.PlayerService.CurrentPlayerBallSkinId);
 
             _ballProjectile.Init(_ballProjectileContainer, _currentBallSkin, GameServices.PlayerService.CurrentPlayerDamage);
@@ -71,8 +65,6 @@ namespace Core.Gameplay.Game.Player
 
         public void Dispose()
         {
-            _goToLeftButton.OnButtonClick -= HandleLeftButtonClick;
-            _goToRightButton.OnButtonClick -= HandleRightButtonClick;
             _ballProjectile.OnBallHitted -= HandleHittedBall;
 
             OnPlayerLose = null;
@@ -89,6 +81,26 @@ namespace Core.Gameplay.Game.Player
 
         void Update()
         {
+            if(!_isPlayerAlive || !_isGameplayStarted)
+                return;
+
+            if (TryGetDragTargetPosition(out var dragWorldPosition, out var isDragging))
+            {
+                if (!isDragging)
+                {
+                    _isTouchDragging = false;
+                    return;
+                }
+
+                _isTouchDragging = true;
+                var clampedX = Mathf.Clamp(dragWorldPosition.x, MIN_X, MAX_X);
+                var targetPosition = new Vector3(clampedX, _player.transform.position.y, _player.transform.position.z);
+                _player.transform.position = Vector3.Lerp(_player.transform.position, targetPosition, Time.deltaTime * _playerMoveSpeed);
+                return;
+            }
+
+            _isTouchDragging = false;
+
 #if UNITY_EDITOR
             if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed)
                 HandleLeftButtonClick();
@@ -146,10 +158,14 @@ namespace Core.Gameplay.Game.Player
                     continue;
                 }
 
-                await UniTask.Delay(TimeSpan.FromSeconds(0.5f), cancellationToken: token);
+                if (!_isTouchDragging)
+                {
+                    await UniTask.Yield(token);
+                    continue;
+                }
 
                 await PlayerHitProcessAsync(token);
-                
+
                 _hitProjectileSource = new();
                 _ballProjectile.ShootProjectile(_playerShootForce);
 
@@ -222,6 +238,63 @@ namespace Core.Gameplay.Game.Player
                 _player.transform.position.y,
                 _player.transform.position.z
             );
+        }
+
+        public void StartGameplay()
+        {
+            if (_isGameplayStarted || !_isPlayerAlive)
+                return;
+
+            _isGameplayStarted = true;
+            _isTouchDragging = false;
+        }
+
+        private bool TryGetFirstTouchPress()
+        {
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+                return true;
+
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+                return true;
+
+            return false;
+        }
+
+        private bool TryGetDragTargetPosition(out Vector3 worldPosition, out bool isDragging)
+        {
+            worldPosition = Vector3.zero;
+            isDragging = false;
+
+            if (Camera.main == null)
+                return false;
+
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+            {
+                var screenPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+                var delta = Touchscreen.current.primaryTouch.delta.ReadValue();
+                isDragging = delta.sqrMagnitude > 0.01f;
+
+                if (!isDragging)
+                    return false;
+
+                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
+                return true;
+            }
+
+            if (Mouse.current != null && Mouse.current.leftButton.isPressed)
+            {
+                var screenPosition = Mouse.current.position.ReadValue();
+                var delta = Mouse.current.delta.ReadValue();
+                isDragging = delta.sqrMagnitude > 0.01f;
+
+                if (!isDragging)
+                    return false;
+
+                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
+                return true;
+            }
+
+            return false;
         }
 
         private void HandleHittedBall() => _hitProjectileSource?.TrySetResult();

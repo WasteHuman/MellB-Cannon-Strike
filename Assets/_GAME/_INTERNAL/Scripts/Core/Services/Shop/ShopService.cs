@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Core.Data;
 using Core.Gameplay;
@@ -10,16 +9,16 @@ namespace Core.Services.Shop
 {
     public class ShopService
     {
-        private readonly List<ShopEntityData> _ballsData = new();
-        private readonly List<ShopEntityData> _skinsData = new();
-        private readonly List<ShopEntityData> _upgradesData = new();
+        private readonly List<ShopEntityDataRuntime> _ballsData = new();
+        private readonly List<ShopEntityDataRuntime> _skinsData = new();
+        private readonly List<ShopEntityDataRuntime> _upgradesData = new();
 
         private PlayerService _playerService;
         private EconomyService _economyService;
 
-        public IReadOnlyList<ShopEntityData> BallsData => _ballsData.AsReadOnly();
-        public IReadOnlyList<ShopEntityData> SkinsData => _skinsData.AsReadOnly();
-        public IReadOnlyList<ShopEntityData> UpgradesData => _upgradesData.AsReadOnly();
+        public IReadOnlyList<ShopEntityDataRuntime> BallsData => _ballsData.AsReadOnly();
+        public IReadOnlyList<ShopEntityDataRuntime> SkinsData => _skinsData.AsReadOnly();
+        public IReadOnlyList<ShopEntityDataRuntime> UpgradesData => _upgradesData.AsReadOnly();
 
         public void Init(PlayerService playerService, EconomyService economyService, ShopEntitiesConfig entitiesConfig)
         {
@@ -31,71 +30,95 @@ namespace Core.Services.Shop
             InitPlayerUpgradedatas(entitiesConfig.PlayerUpgradesData.AsReadOnly());
         }
 
-        public void BuyPlayerSkin(string skinId)
+        public bool BuyPlayerSkin(string skinId)
         {
             var skin = _skinsData.Find(skin => skin.EntityID == skinId);
 
             if(skin == null)
             {
                 Debug.LogWarning($"[Shop Service] Skin to bought is null!");
-                return;
+                return false;
             }
 
-            if (_economyService.HasEnoughBalance(skin.EntityCost) && !skin.IsPurchased)
+            if (skin.IsPurchased)
             {
-                _economyService.SpendCoins(skin.EntityCost);
-                skin.IsPurchased = true;
-                _playerService.AddSkinToPurchased(skin.EntityID);
+                return false;
             }
-            else
+
+            if (!_economyService.HasEnoughBalance(skin.EntityCost))
+            {
                 Debug.LogWarning($"[Shop Service] Player not enough coins for buy this skin {skinId}!");
+                return false;
+            }
+
+            _economyService.SpendCoins(skin.EntityCost);
+            skin.IsPurchased = true;
+            _playerService.AddSkinToPurchased(skin.EntityID);
+            GameServices.SaveAll();
+            return true;
         }
 
-        public void BuyPlayerBallSkin(string skinId)
+        public bool BuyPlayerBallSkin(string skinId)
         {
             var skin = _ballsData.Find(skin => skin.EntityID == skinId);
 
             if(skin == null)
             {
                 Debug.LogWarning($"[Shop Service] Skin to bought is null!");
-                return;
+                return false;
             }
 
-            if (_economyService.HasEnoughBalance(skin.EntityCost) && !skin.IsPurchased)
+            if (skin.IsPurchased)
             {
-                _economyService.SpendCoins(skin.EntityCost);
-                skin.IsPurchased = true;
-                _playerService.AddBallSkinToPurchased(skin.EntityID);
-                SelectPlayerBallSkin(skin.EntityID);
+                return false;
             }
-            else
+
+            if (!_economyService.HasEnoughBalance(skin.EntityCost))
+            {
                 Debug.LogWarning($"[Shop Service] Player not enough coins for buy this skin {skinId}!");
+                return false;
+            }
+
+            _economyService.SpendCoins(skin.EntityCost);
+            skin.IsPurchased = true;
+            _playerService.AddBallSkinToPurchased(skin.EntityID);
+            GameServices.SaveAll();
+            return true;
         }
 
-        public void BuyPlayerUpgrade(string upgradeId)
+        public bool BuyPlayerUpgrade(string upgradeId)
         {
             var upgrade = _upgradesData.Find(skin => skin.EntityID == upgradeId);
 
             if(upgrade == null)
             {
                 Debug.LogWarning($"[Shop Service] Upgrade to bought is null!");
-                return;
+                return false;
             }
 
-            if (_economyService.HasEnoughBalance(upgrade.EntityCost) && !upgrade.IsPurchased)
+            if (upgrade.IsPurchased)
             {
-                _economyService.SpendCoins(upgrade.EntityCost);
-                upgrade.IsPurchased = true;
-                _playerService.AddUpgradeToPurchased(upgrade.EntityID);
-
-                if(upgradeId.Contains("Damage"))
-                    _playerService.DoublePlayerDamage();
-                
-                if(upgradeId.Contains("Reload"))
-                    _playerService.ReducePlayerReload();
+                return false;
             }
-            else
+
+            if (!_economyService.HasEnoughBalance(upgrade.EntityCost))
+            {
                 Debug.LogWarning($"[Shop Service] Player not enough coins for buy this upgrade {upgradeId}!");
+                return false;
+            }
+
+            _economyService.SpendCoins(upgrade.EntityCost);
+            upgrade.IsPurchased = true;
+            _playerService.AddUpgradeToPurchased(upgrade.EntityID);
+
+            if(upgradeId.Contains("Damage"))
+                _playerService.DoublePlayerDamage();
+             
+            if(upgradeId.Contains("Reload"))
+                _playerService.ReducePlayerReload();
+
+            GameServices.SaveAll();
+            return true;
         }
 
         public void SelectPlayerSkin(string skinId)
@@ -109,6 +132,7 @@ namespace Core.Services.Shop
             }
 
             _playerService.ChangePlayerSkin(skinId);
+            GameServices.SaveAll();
         }
 
         public void SelectPlayerBallSkin(string skinId)
@@ -122,11 +146,17 @@ namespace Core.Services.Shop
             }
 
             _playerService.ChangePlayerBallSkin(skinId);
+            GameServices.SaveAll();
         }
 
         private void InitPlayerSkinDatas(IReadOnlyList<ShopEntityData> playerSkinDatas)
         {
-            _skinsData.AddRange(playerSkinDatas);
+            for (int i = 0; i < playerSkinDatas.Count; i++)
+            {
+                var data = playerSkinDatas[i];
+                var runtimeData = new ShopEntityDataRuntime(data.EntityID, data.EntityCost, data.Type, data.EntityDescription, data.IsPurchased);
+                _skinsData.Add(runtimeData);
+            }
 
             _skinsData.Sort((a, b) => a.EntityCost.CompareTo(b.EntityCost));
             var purchasedSkins = _playerService.GetData().PurchasedPlayerSkins;
@@ -143,7 +173,12 @@ namespace Core.Services.Shop
 
         private void InitPlayerBallSkinDatas(IReadOnlyList<ShopEntityData> playerBallSkinDatas)
         {
-            _ballsData.AddRange(playerBallSkinDatas);
+            for (int i = 0; i < playerBallSkinDatas.Count; i++)
+            {
+                var data = playerBallSkinDatas[i];
+                var runtimeData = new ShopEntityDataRuntime(data.EntityID, data.EntityCost, data.Type, data.EntityDescription, data.IsPurchased);
+                _ballsData.Add(runtimeData);
+            }
 
             _ballsData.Sort((a, b) => a.EntityCost.CompareTo(b.EntityCost));
             var purchasedSkins = _playerService.GetData().PurchasedPlayerBallSkins;
@@ -160,7 +195,12 @@ namespace Core.Services.Shop
 
         private void InitPlayerUpgradedatas(IReadOnlyList<ShopEntityData> upgradeDatas)
         {
-            _upgradesData.AddRange(upgradeDatas);
+            for (int i = 0; i < upgradeDatas.Count; i++)
+            {
+                var data = upgradeDatas[i];
+                var runtimeData = new ShopEntityDataRuntime(data.EntityID, data.EntityCost, data.Type, data.EntityDescription, data.IsPurchased);
+                _upgradesData.Add(runtimeData);
+            }
 
             _upgradesData.Sort((a, b) => a.EntityCost.CompareTo(b.EntityCost));
             var purchasedSkins = _playerService.GetData().PurchasedUpgrades;

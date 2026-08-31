@@ -19,26 +19,37 @@ namespace Core.Data
 
         public PlayerData()
         {
-            Coins = GameConstants.INITIAL_COINS;
+            EnsureValidState();
+        }
 
-            LastDailyBonusTime = DateTime.Now;
+        public void EnsureValidState()
+        {
+            if (string.IsNullOrEmpty(CurrentPlayerSkinId))
+                CurrentPlayerSkinId = GameConstants.INITIAL_PLAYER_SKIN_ID;
 
-            CurrentPlayerSkinId = GameConstants.INITIAL_PLAYER_SKIN_ID;
-            CurrentPlayerDamage = GameConstants.INITIAL_PLAYER_DAMAGE;
-            CurrentPlayerReload = GameConstants.INITIAL_PLAYER_RELOAD;
-            CurrentPlayerBallSkinId = GameConstants.INITIAL_PLAYER_BALL_SKIN_ID;
+            if (string.IsNullOrEmpty(CurrentPlayerBallSkinId))
+                CurrentPlayerBallSkinId = GameConstants.INITIAL_PLAYER_BALL_SKIN_ID;
 
-            PurchasedPlayerSkins = new()
-            {
-                GameConstants.INITIAL_PLAYER_SKIN_ID  
-            };
+            if (CurrentPlayerDamage <= 0)
+                CurrentPlayerDamage = GameConstants.INITIAL_PLAYER_DAMAGE;
 
-            PurchasedPlayerBallSkins = new()
-            {
-                GameConstants.INITIAL_PLAYER_BALL_SKIN_ID
-            };
+            if (CurrentPlayerReload <= 0)
+                CurrentPlayerReload = GameConstants.INITIAL_PLAYER_RELOAD;
 
-            PurchasedUpgrades = new();
+            if (Coins <= 0)
+                Coins = GameConstants.INITIAL_COINS;
+
+            LastDailyBonusTime ??= DateTime.Now;
+
+            PurchasedPlayerSkins ??= new List<string>();
+            if (!PurchasedPlayerSkins.Contains(GameConstants.INITIAL_PLAYER_SKIN_ID))
+                PurchasedPlayerSkins.Add(GameConstants.INITIAL_PLAYER_SKIN_ID);
+
+            PurchasedPlayerBallSkins ??= new List<string>();
+            if (!PurchasedPlayerBallSkins.Contains(GameConstants.INITIAL_PLAYER_BALL_SKIN_ID))
+                PurchasedPlayerBallSkins.Add(GameConstants.INITIAL_PLAYER_BALL_SKIN_ID);
+
+            PurchasedUpgrades ??= new List<string>();
         }
     }
 }
