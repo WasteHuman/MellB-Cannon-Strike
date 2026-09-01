@@ -47,6 +47,7 @@ namespace Core.Gameplay.Game.Player
 
         public void Initialize()
         {
+            _isPlayerAlive = true;
             _isGameplayStarted = false;
             _isTouchDragging = false;
 
@@ -214,6 +215,51 @@ namespace Core.Gameplay.Game.Player
             return;
         }
 
+        public void StartGameplay()
+        {
+            if (_isGameplayStarted || !_isPlayerAlive)
+                return;
+
+            _isGameplayStarted = true;
+            _isTouchDragging = false;
+        }
+
+        private bool TryGetDragTargetPosition(out Vector3 worldPosition, out bool isDragging)
+        {
+            worldPosition = Vector3.zero;
+            isDragging = false;
+
+            if (Camera.main == null)
+                return false;
+
+            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
+            {
+                var touch = Touchscreen.current.primaryTouch;
+                var delta = touch.delta.ReadValue();
+                if (delta.sqrMagnitude <= 0.01f)
+                    return false;
+
+                isDragging = true;
+                var screenPosition = touch.position.ReadValue();
+                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
+                return true;
+            }
+
+            if (Mouse.current != null && Mouse.current.leftButton.isPressed)
+            {
+                var delta = Mouse.current.delta.ReadValue();
+                if (delta.sqrMagnitude <= 0.01f)
+                    return false;
+
+                isDragging = true;
+                var screenPosition = Mouse.current.position.ReadValue();
+                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
+                return true;
+            }
+
+            return false;
+        }
+
         private void HandleLeftButtonClick()
         {
             if(!_isPlayerAlive)
@@ -238,63 +284,6 @@ namespace Core.Gameplay.Game.Player
                 _player.transform.position.y,
                 _player.transform.position.z
             );
-        }
-
-        public void StartGameplay()
-        {
-            if (_isGameplayStarted || !_isPlayerAlive)
-                return;
-
-            _isGameplayStarted = true;
-            _isTouchDragging = false;
-        }
-
-        private bool TryGetFirstTouchPress()
-        {
-            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-                return true;
-
-            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-                return true;
-
-            return false;
-        }
-
-        private bool TryGetDragTargetPosition(out Vector3 worldPosition, out bool isDragging)
-        {
-            worldPosition = Vector3.zero;
-            isDragging = false;
-
-            if (Camera.main == null)
-                return false;
-
-            if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
-            {
-                var screenPosition = Touchscreen.current.primaryTouch.position.ReadValue();
-                var delta = Touchscreen.current.primaryTouch.delta.ReadValue();
-                isDragging = delta.sqrMagnitude > 0.01f;
-
-                if (!isDragging)
-                    return false;
-
-                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
-                return true;
-            }
-
-            if (Mouse.current != null && Mouse.current.leftButton.isPressed)
-            {
-                var screenPosition = Mouse.current.position.ReadValue();
-                var delta = Mouse.current.delta.ReadValue();
-                isDragging = delta.sqrMagnitude > 0.01f;
-
-                if (!isDragging)
-                    return false;
-
-                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
-                return true;
-            }
-
-            return false;
         }
 
         private void HandleHittedBall() => _hitProjectileSource?.TrySetResult();

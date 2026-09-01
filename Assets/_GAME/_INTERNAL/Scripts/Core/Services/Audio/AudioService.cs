@@ -79,7 +79,7 @@ namespace Core.Services.Audio
                 return;
             }
 
-            float volumeScale = type == SoundType.Coins_Changed ? 3f : 1f;
+            float volumeScale = type == SoundType.Coins_Taken ? 3f : 1f;
 
             _sfxSource.PlayOneShot(clip.Clip, volumeScale);
         }

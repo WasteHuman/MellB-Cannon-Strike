@@ -90,7 +90,6 @@ namespace Core.Gameplay.Game.TargetSystem
                 return;
 
             _currentHp -= damage;
-            Debug.Log($"[Target Ball View] Damage: {damage}");
 
             if(_currentHp <= 0 && !CanSplit)
                 HandleGoneHealth(OnTargetDestroyed);

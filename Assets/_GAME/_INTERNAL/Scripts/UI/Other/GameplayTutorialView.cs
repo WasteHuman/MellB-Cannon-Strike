@@ -34,6 +34,9 @@ namespace UI.Other
 
         public void Initialize()
         {
+            if(!gameObject.activeSelf)
+                gameObject.SetActive(true);
+
             _skipTutorialButton.OnButtonClick += HandleSkipTutorialButtonClick;
             AsyncLoopAnimation(this.GetCancellationTokenOnDestroy()).Forget();
         }

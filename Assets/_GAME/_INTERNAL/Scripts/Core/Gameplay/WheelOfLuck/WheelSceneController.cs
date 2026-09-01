@@ -243,7 +243,7 @@ namespace Core.WheelOfLuck
                 return;
 
             _state.FreeSpins = 1;
-            _state.NextAvailableUtc = DateTimeOffset.UtcNow + _config.Cooldown;
+            _state.NextAvailableUtc = DateTimeOffset.MinValue;
 
             _persistence.Save(_state);
         }

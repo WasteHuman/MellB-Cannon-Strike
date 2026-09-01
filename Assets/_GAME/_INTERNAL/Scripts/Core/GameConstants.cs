@@ -19,6 +19,7 @@
         public const string KEY_WELCOME_SCREEN_SHOWN = "Welcome_Screen_Shown";
         public const string KEY_PLAYER_DATA = "Player_Data_JSON";
         public const string KEY_LAST_FREE_DAILY_BONUS_CLAIM = "Last_Daily_Free_Bonus";
+        public const string KEY_TUTORIAL_COMPLETED = "Tutorial_Completed";
         #endregion
 
         #region Economy & Player Data

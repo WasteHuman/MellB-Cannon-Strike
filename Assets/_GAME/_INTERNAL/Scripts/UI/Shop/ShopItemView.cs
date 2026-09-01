@@ -1,5 +1,6 @@
 using System;
 using Core.Data;
+using DG.Tweening;
 using TMPro;
 using UI.Other;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace UI.Shop
     {
         [SerializeField] private Image _itemIcon;
         [SerializeField] private Image _buttonIcon;
+        [SerializeField] private Image _cardBackground;
         [SerializeField] private TextMeshProUGUI _descriptionLabel;
         [SerializeField] private TextMeshProUGUI _costLabel;
 
@@ -21,11 +23,23 @@ namespace UI.Shop
         [SerializeField] private Sprite _buySprite;
         [SerializeField] private GameObject _boughtCheckmark;
 
+        [Space(5), Header("Visual Setup")]
+        [SerializeField] private Sprite _selectedCardBackgroundSprite;
+        [SerializeField] private Sprite _unselectedCardBackgroundSprite;
+        [SerializeField] private Image _glow;
+        [SerializeField] private float _targetGlowSize = 0.955f;
+        [SerializeField] private float _originalGlowSize;
+        [SerializeField] private float _glowPulseAnimationDuration = 2f;
+
         private string _itemId = string.Empty;
         private ShopItemType _type;
 
+        private Material _glowMaterial;
+
         private bool _isPurchased = false;
         private bool _isSelected = false;
+
+        private Tween _glowPulseTween;
 
         public string ItemId => _itemId;
         public bool IsSelected => _isSelected;
@@ -39,6 +53,8 @@ namespace UI.Shop
             _buyAndSelectButton.OnButtonClick -= HandleButtonClick;
             OnItemPurchased = null;
             OnItemSelected = null;
+
+            StopPulseAnimation();
         }
 
         public void Init(Sprite itemSprite, string itemId, string description, int cost, ShopItemType type, bool isPurchased = false, bool isSelected = false)
@@ -49,6 +65,12 @@ namespace UI.Shop
 
             _isPurchased = isPurchased;
             _isSelected = isSelected;
+
+            if (_glow != null)
+            {
+                _glowMaterial = new(_glow.material);
+                _glow.material = _glowMaterial;
+            }
 
             if(_descriptionLabel != null)
                 _descriptionLabel.text = description;
@@ -72,10 +94,7 @@ namespace UI.Shop
                 _buttonIcon.sprite = _buySprite;
 
             if (isSelected)
-            {
-                _buttonIcon.sprite = _selectedSprite;
-                _costLabel.gameObject.SetActive(false);
-            }
+                UpdateToSelectedItemView();
 
             _buyAndSelectButton.OnButtonClick += HandleButtonClick;
         }
@@ -94,8 +113,13 @@ namespace UI.Shop
         {
             if (_isPurchased)
             {
+                if(_cardBackground != null)
+                    _cardBackground.sprite = _selectedCardBackgroundSprite;   
+
                 _buttonIcon.sprite = _selectedSprite;
+                _costLabel.gameObject.SetActive(false);
                 _isSelected = true;
+                StartPulseAnimation();
             }
         }
 
@@ -113,12 +137,54 @@ namespace UI.Shop
                     _buttonIcon.sprite = _unselectedSprite;
                     _isSelected = false;
                 }
+
+                if(_cardBackground != null)
+                    _cardBackground.sprite = _unselectedCardBackgroundSprite;   
+
+                StopPulseAnimation();
             }
             else
             {
                 _buyAndSelectButton.gameObject.SetActive(false);
                 _boughtCheckmark.SetActive(true);
             }
+        }
+
+        private void StopPulseAnimation()
+        {
+            if (_glow == null || _glowMaterial == null)
+                return;
+
+            _glowPulseTween?.Kill();
+            _glowPulseTween = null;
+
+            _glowMaterial.SetFloat("_BoxSize", _originalGlowSize);
+
+            var renderedMaterial = _glow.materialForRendering;
+            if (renderedMaterial != null)
+                renderedMaterial.SetFloat("_BoxSize", _originalGlowSize);
+
+            _glow.gameObject.SetActive(false);
+        }
+
+        private void StartPulseAnimation()
+        {
+            if (_glow == null || _glowMaterial == null)
+                return;
+
+            _glow.gameObject.SetActive(true);
+            _glowPulseTween?.Kill();
+
+            _glow.SetMaterialDirty();
+            var renderedMaterial = _glow.materialForRendering;
+            if (renderedMaterial == null)
+                return;
+
+            renderedMaterial.SetFloat("_BoxSize", _originalGlowSize);
+            _glowPulseTween = renderedMaterial
+                .DOFloat(_targetGlowSize, "_BoxSize", _glowPulseAnimationDuration)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
         }
 
         private void HandleButtonClick()

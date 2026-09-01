@@ -334,6 +334,7 @@ Transform:
   - {fileID: 1805253507}
   - {fileID: 571115507}
   - {fileID: 1443518882}
+  - {fileID: 1557640969}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &144020365
@@ -1017,7 +1018,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &446358813
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2359,7 +2360,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Game.TargetSystem.TargetSystemController
   _spritesConfig: {fileID: 11400000, guid: 652aadfe3ef46d14eb3d43732f40a064, type: 2}
   _difficultConfig: {fileID: 11400000, guid: 064c6f3ad1562114aa43e62b6831fab1, type: 2}
+  _totalEarnedCoinsMultiplier: 2
+  _coinPrefab: {fileID: 4740795705343665716, guid: efdaf62a77ee13d439c147cbf8819108, type: 3}
+  _coinsContainer: {fileID: 1557640969}
+  _coinSprite: {fileID: 21300000, guid: e12d3a36c49829043bd87e1cfe061e6a, type: 3}
+  _coinPoolInitialCount: 35
   _spawner: {fileID: 1443518883}
+  _playerController: {fileID: 1805253510}
 --- !u!1 &803233114
 GameObject:
   m_ObjectHideFlags: 0
@@ -4374,6 +4381,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529577855}
   m_CullTransparentMesh: 1
+--- !u!1 &1557640968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1557640969}
+  m_Layer: 0
+  m_Name: CoinsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1557640969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557640968}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 110618850}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1639370290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4932,7 +4970,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Player.PlayerController
   _player: {fileID: 1805253506}
   _playerView: {fileID: 1805253509}
-  _playerMoveSpeed: 2.5
+  _playerMoveSpeed: 5
   _playerReloadTime: 0.75
   _playerShootForce: 20
   _playerSpriteChangeDelay: 0.35

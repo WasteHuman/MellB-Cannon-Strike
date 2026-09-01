@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Data;
+using UnityEngine;
 
 namespace Core.Services.Player
 {
@@ -17,6 +18,7 @@ namespace Core.Services.Player
         public float CurrentPlayerReload => _currentPlayerData.CurrentPlayerReload;
         public int SessionPlayerScore => _sessionPlayerScore;
         public int SessionEarnedCoins => _sessionEarnedCoins;
+        public bool IsTutorialCompleted => _currentPlayerData.IsTutorialCompleted;
 
         public event Action<string> OnPlayerBallSkinChanged;
         public event Action<string> OnPlayerSkinChanged;
@@ -28,6 +30,12 @@ namespace Core.Services.Player
 
         public void DoublePlayerDamage() => _currentPlayerData.CurrentPlayerDamage *= 2;
         public void ReducePlayerReload() => _currentPlayerData.CurrentPlayerReload *= 0.25f;
+        public void MarkTutorialAsCompleted()
+        {
+            _currentPlayerData.IsTutorialCompleted = true;
+            PlayerPrefs.SetInt(GameConstants.KEY_TUTORIAL_COMPLETED, 1);
+            PlayerPrefs.Save();
+        }
 
         public void ChangePlayerSkin(string skinId)
         {

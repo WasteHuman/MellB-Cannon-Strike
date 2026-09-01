@@ -33,10 +33,13 @@ namespace Core.Gameplay.Controllers
 
         public override void Initialize()
         {
-            _gameplayTutorialView.Initialize();
-
             _playerInfoPanelView.Init();
             _playerController.Initialize();
+
+            if(!GameServices.PlayerService.IsTutorialCompleted)
+                _gameplayTutorialView.Initialize();
+            else
+                HandleGameplayStarted();
         }
 
         public override void Exit()
@@ -65,8 +68,13 @@ namespace Core.Gameplay.Controllers
 
         private void HandleGameplayStarted()
         {
-            if (_gameplayTutorialView != null)
+            if (_gameplayTutorialView != null && !GameServices.PlayerService.IsTutorialCompleted)
+            {
                 _gameplayTutorialView.Hide();
+                GameServices.PlayerService.MarkTutorialAsCompleted();
+            }
+
+            _gameplayTutorialView.gameObject.SetActive(false);
 
             _targetSystemController.Initialize();
             _playerController.StartGameplay();

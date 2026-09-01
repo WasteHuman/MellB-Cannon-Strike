@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Core.Data
 {
@@ -11,6 +12,7 @@ namespace Core.Data
         public int CurrentPlayerDamage;
         public float CurrentPlayerReload;
         public float Coins;
+        public bool IsTutorialCompleted;
         public DateTime? LastDailyBonusTime;
 
         public List<string> PurchasedPlayerSkins;
@@ -38,6 +40,9 @@ namespace Core.Data
 
             if (Coins <= 0)
                 Coins = GameConstants.INITIAL_COINS;
+
+            if (PlayerPrefs.HasKey(GameConstants.KEY_TUTORIAL_COMPLETED) && !IsTutorialCompleted)
+                IsTutorialCompleted = PlayerPrefs.GetInt(GameConstants.KEY_TUTORIAL_COMPLETED) == 1;
 
             LastDailyBonusTime ??= DateTime.Now;
 

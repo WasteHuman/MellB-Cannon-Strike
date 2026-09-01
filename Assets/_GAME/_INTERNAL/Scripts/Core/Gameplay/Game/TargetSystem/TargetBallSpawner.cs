@@ -37,7 +37,7 @@ namespace Core.Gameplay.Game.TargetSystem
 
         private ObjectPool<TargetBallView> _targetsPool;
 
-        public event Action<int> OnTargetDestroyed;
+        public event Action<TargetBallView> OnTargetDestroyed;
 
         void OnDestroy()
         {
@@ -110,13 +110,13 @@ namespace Core.Gameplay.Game.TargetSystem
             _currentSpawnedTargets = Mathf.Max(0, _currentSpawnedTargets - 1);
             _difficultSystem.RecalculateDifficult();
 
-            OnTargetDestroyed?.Invoke(view.InitialHp);
+            OnTargetDestroyed?.Invoke(view);
         }
 
         private void HandleSplittedTarget(TargetBallView view)
         {
             _targetsPool.ReturnToPool(view);
-            OnTargetDestroyed?.Invoke(view.InitialHp);
+            OnTargetDestroyed?.Invoke(view);
 
             var leftBall = _targetsPool.GetFreeElement();
             var rightBall = _targetsPool.GetFreeElement();

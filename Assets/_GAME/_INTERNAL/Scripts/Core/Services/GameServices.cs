@@ -53,6 +53,7 @@ namespace Core.Services
                 SaveService.PlayerData.CurrentPlayerBallSkinId = playerData.CurrentPlayerBallSkinId;
                 SaveService.PlayerData.CurrentPlayerDamage = playerData.CurrentPlayerDamage;
                 SaveService.PlayerData.CurrentPlayerReload = playerData.CurrentPlayerReload;
+                SaveService.PlayerData.IsTutorialCompleted = playerData.IsTutorialCompleted;
                 SaveService.PlayerData.PurchasedPlayerSkins = new List<string>(playerData.PurchasedPlayerSkins);
                 SaveService.PlayerData.PurchasedPlayerBallSkins = new List<string>(playerData.PurchasedPlayerBallSkins);
                 SaveService.PlayerData.PurchasedUpgrades = new List<string>(playerData.PurchasedUpgrades);
