@@ -45,8 +45,6 @@ namespace UI.Controllers
 
         private void HandlePlayerReady()
         {
-            Debug.Log($"[Main Scene Screen Controller] Player is ready.");
-
             PlayerPrefs.SetInt(GameConstants.KEY_WELCOME_SCREEN_SHOWN, 1);
 
             _welcomeScreenView.Close();

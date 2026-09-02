@@ -30,11 +30,9 @@ namespace Core.WheelOfLuck
             switch (reward.Type)
             {
                 case WheelReward.RewardType.Coins:
-                    Debug.Log($"[Wheel] Given coins: {reward.Amount}");
                     return HandleGameResult(reward, reward.Amount);
 
                 case WheelReward.RewardType.XP:
-                    Debug.Log($"[Wheel] Given XP reward: {reward.Amount}");
                     return HandleGameResult(reward, 0f);
 
                 case WheelReward.RewardType.FreeSpin:
@@ -46,12 +44,10 @@ namespace Core.WheelOfLuck
 
                     _persistence.Save(_state);
 
-                    Debug.Log($"[Wheel] Given free spins: {spins}");
                     return HandleGameResult(reward, 0f);
                 }
 
                 case WheelReward.RewardType.Nothing:
-                    Debug.Log("[Wheel] Nothing to give");
                     return HandleGameResult(reward, 0f);
 
                 case WheelReward.RewardType.Sector:

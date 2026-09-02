@@ -22,6 +22,7 @@ namespace Core.Services.Player
 
         public event Action<string> OnPlayerBallSkinChanged;
         public event Action<string> OnPlayerSkinChanged;
+        public event Action<int> OnCurrentPlayerScoreChanged;
 
         public void Init(PlayerData playerData)
         {
@@ -69,7 +70,11 @@ namespace Core.Services.Player
 
         public void ResetSessionScore() => _sessionPlayerScore = 0;
         public void ResetEarnedSessionCoins() => _sessionEarnedCoins = 0;
-        public void IncreasePlayerSessionScore() => _sessionPlayerScore++;
+        public void IncreasePlayerSessionScore()
+        {
+            _sessionPlayerScore++;
+            OnCurrentPlayerScoreChanged?.Invoke(_sessionPlayerScore);
+        }
         public void AddEarnedCoins(int amount) => _sessionEarnedCoins += amount;
 
         /// <summary>

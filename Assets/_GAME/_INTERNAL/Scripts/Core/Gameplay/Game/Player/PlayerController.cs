@@ -43,6 +43,8 @@ namespace Core.Gameplay.Game.Player
         private bool _isTouchDragging;
         private bool _isGameplayStarted;
 
+        public bool IsPlayerAlive => _isPlayerAlive;
+
         public event Action OnPlayerLose;
 
         public void Initialize()
@@ -73,6 +75,9 @@ namespace Core.Gameplay.Game.Player
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            if(!_isPlayerAlive)
+                return;
+            
             if(!collision.gameObject.GetComponentOrNull<TargetBallView>())
                 return;
 

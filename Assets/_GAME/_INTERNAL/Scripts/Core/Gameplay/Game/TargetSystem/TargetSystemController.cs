@@ -1,6 +1,7 @@
 using Core.Gameplay.Game.DifficultSystem;
 using Core.Gameplay.Game.Player;
 using Core.Services;
+using Core.Services.Audio;
 using SO.Game;
 using SO.Game.DifficultSystem;
 using UnityEngine;
@@ -27,6 +28,8 @@ namespace Core.Gameplay.Game.TargetSystem
         [Space(5), Header("Refs")]
         [SerializeField] private PlayerController _playerController;
 
+        private bool _isInitialized;
+
         private GameDifficultSystem _gameDifficultSystem;
         private ObjectPool<CoinPickupView> _coinPool;
         private Transform _playerCoinTarget;
@@ -39,11 +42,19 @@ namespace Core.Gameplay.Game.TargetSystem
 
         public void Initialize()
         {
+            if(_isInitialized)
+                return;
+
+            _isInitialized = true;
+
             _gameDifficultSystem = new(_difficultConfig);
 
             if (_coinPrefab != null)
             {
-                _coinPool = new ObjectPool<CoinPickupView>(_coinPrefab, _coinPoolInitialCount, _coinsContainer);
+                _coinPool = new ObjectPool<CoinPickupView>(_coinPrefab, _coinPoolInitialCount, _coinsContainer)
+                {
+                    AutoExpand = true
+                };
                 _playerCoinTarget = _playerController.transform;
             }
 
@@ -87,6 +98,7 @@ namespace Core.Gameplay.Game.TargetSystem
                     startPosition + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.25f, 0.15f), 0f),
                     playerPosition + new Vector3(Random.Range(-0.25f, 0.25f), Random.Range(-0.15f, 0.2f), 0f));
             }
+            AudioService.Instance.PlaySfx(SoundType.Coins_Take);
         }
     }
 }

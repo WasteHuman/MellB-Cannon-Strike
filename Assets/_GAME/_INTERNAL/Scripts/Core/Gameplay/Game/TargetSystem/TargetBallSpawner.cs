@@ -34,6 +34,7 @@ namespace Core.Gameplay.Game.TargetSystem
         private int _currentSpawnedTargets = 0;
 
         private readonly List<TargetBallView> _targets = new();
+        private readonly HashSet<TargetBallView> _subscribedTargets = new();
 
         private ObjectPool<TargetBallView> _targetsPool;
 
@@ -46,10 +47,16 @@ namespace Core.Gameplay.Game.TargetSystem
 
         public void Init(TargetBallSpritesConfig spritesConfig, GameDifficultSystem difficultSystem)
         {
+            if (_targetsPool != null)
+                return;
+
             _spritesConfig = spritesConfig;
             _difficultSystem = difficultSystem;
 
-            _targetsPool = new(_targetBallViewPrefab, _initialCount, transform);
+            _targetsPool = new(_targetBallViewPrefab, _initialCount, transform)
+            {
+                AutoExpand = true
+            };
             _canSpawn = true;
             InitSubscribes();
             AsyncTargetBallSpawn(this.GetCancellationTokenOnDestroy()).Forget();
@@ -59,39 +66,44 @@ namespace Core.Gameplay.Game.TargetSystem
         {
             _canSpawn = false;
             for(int i = 0; i < _targets.Count; i++)
-                _targets[i].FreezeTarget();
+                if (_targets[i] != null && _targets[i].gameObject.activeSelf)
+                    _targets[i].FreezeTarget();
         }
 
         private void InitSubscribes()
         {
-            _targets.AddRange(_targetsPool.GetFreeElements());
-
-            for (int i = 0; i < _targets.Count; i++)
-            {
-                _targets[i].OnTargetDestroyed += HandleDestroyedTarget;
-                _targets[i].OnTargetSplitted += HandleSplittedTarget;
-            }
+            var initialTargets = _targetsPool.GetFreeElements();
+            for (int i = 0; i < initialTargets.Count; i++)
+                SubscribeTarget(initialTargets[i]);
         }
 
         private void DestroySubscribes()
         {
             for (int i = 0; i < _targets.Count; i++)
             {
+                if (_targets[i] == null)
+                    continue;
+
                 _targets[i].OnTargetDestroyed -= HandleDestroyedTarget;
                 _targets[i].OnTargetSplitted -= HandleSplittedTarget;
             }
+
+            _subscribedTargets.Clear();
         }
 
         private async UniTask AsyncTargetBallSpawn(CancellationToken token)
         {
             while (!token.IsCancellationRequested && _canSpawn)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(_spawnDelay));
+                await UniTask.Delay(TimeSpan.FromSeconds(_spawnDelay), cancellationToken: token);
+
+                if (!_canSpawn || token.IsCancellationRequested)
+                    break;
 
                 if(_currentSpawnedTargets >= _maxSpawnedTargetsAtMoment)
                     continue;
 
-                var newTargetBall = _targetsPool.GetFreeElement();
+                var newTargetBall = GetTarget();
                 var spawnPosition = _nextSpawnLeft ? _leftSpawnpoint.position : _rightSpawnpoint.position;
                 var impulseDirection = _nextSpawnLeft ? Vector2.right : Vector2.left;
 
@@ -101,6 +113,23 @@ namespace Core.Gameplay.Game.TargetSystem
                 _currentSpawnedTargets++;
                 _nextSpawnLeft = !_nextSpawnLeft;
             }
+        }
+
+        private TargetBallView GetTarget()
+        {
+            var target = _targetsPool.GetFreeElement();
+            SubscribeTarget(target);
+            return target;
+        }
+
+        private void SubscribeTarget(TargetBallView target)
+        {
+            if (target == null || !_subscribedTargets.Add(target))
+                return;
+
+            _targets.Add(target);
+            target.OnTargetDestroyed += HandleDestroyedTarget;
+            target.OnTargetSplitted += HandleSplittedTarget;
         }
 
         private void HandleDestroyedTarget(TargetBallView view)
@@ -118,8 +147,8 @@ namespace Core.Gameplay.Game.TargetSystem
             _targetsPool.ReturnToPool(view);
             OnTargetDestroyed?.Invoke(view);
 
-            var leftBall = _targetsPool.GetFreeElement();
-            var rightBall = _targetsPool.GetFreeElement();
+            var leftBall = GetTarget();
+            var rightBall = GetTarget();
 
             var leftImpulseDirection = Vector2.left;
             var rightImpulseDirection = Vector2.right;

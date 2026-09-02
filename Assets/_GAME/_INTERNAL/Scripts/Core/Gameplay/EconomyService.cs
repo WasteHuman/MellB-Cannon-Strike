@@ -49,8 +49,6 @@ namespace Core.Gameplay
 
             _currentCoinsBalance += amount;
             OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
-
-            Debug.Log($"[Economy] Added coins: +{amount}. New balance: {_currentCoinsBalance}");
         }
 
         /// <summary>
@@ -72,8 +70,7 @@ namespace Core.Gameplay
 
             _currentCoinsBalance -= amount;
             OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
-
-            Debug.Log($"[Economy] Debited: -{amount}. New balance: {_currentCoinsBalance}");
+            
             return true;
         }
 

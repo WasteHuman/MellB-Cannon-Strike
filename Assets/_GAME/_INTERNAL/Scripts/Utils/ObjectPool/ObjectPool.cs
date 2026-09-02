@@ -38,7 +38,11 @@ namespace Utils
             }
 
             if (AutoExpand)
-                return CreateObject(_pool);
+            {
+                var newElement = CreateObject(_pool);
+                newElement.gameObject.SetActive(true);
+                return newElement;
+            }
 
             throw new System.Exception($"No free elements in pool ot type {typeof(T)}");
         }

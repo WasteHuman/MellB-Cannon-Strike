@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -21,11 +20,11 @@ namespace UI.Other
             switch (linkInfo.GetLinkID())
             {
                 case "terms":
-                    Application.OpenURL("https://telegra.ph/Terms-Of-Use-07-23");
+                    Application.OpenURL("https://telegra.ph/Terms-Of-Use-09-01-4");
                     Debug.Log("Terms Of Use URL opened");
                     break;
                 case "privacy":
-                    Application.OpenURL("https://telegra.ph/Privacy-Policy-07-23-125");
+                    Application.OpenURL("https://telegra.ph/Privacy-Policy-09-01-149");
                     Debug.Log("Privacy Poliscy URL opened");
                     break;
             }

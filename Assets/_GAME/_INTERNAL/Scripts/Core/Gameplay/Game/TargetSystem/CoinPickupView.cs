@@ -12,8 +12,7 @@ namespace Core.Gameplay.Game.TargetSystem
         [SerializeField] private float _travelDuration = 0.42f;
         [SerializeField] private float _minScaleOffset = 0.5f;
         [SerializeField] private float _maxScaleOffset = 1f;
-
-        private Vector3 _originalScale;
+        [SerializeField] private Vector3 _originalScale;
 
         private Tween _currentTween;
 
@@ -30,8 +29,9 @@ namespace Core.Gameplay.Game.TargetSystem
             if (_spriteRenderer == null)
                 return;
 
-            _originalScale = transform.localScale;
             float randomScaleOffset = Random.Range(_minScaleOffset, _maxScaleOffset);
+            float randomTravelDuration = Random.Range(-0.1f, 0.1f);
+            float travelDuration = _travelDuration + randomTravelDuration;
             Vector3 randomScale = _originalScale * randomScaleOffset;
 
             _currentTween?.Kill();
@@ -46,14 +46,13 @@ namespace Core.Gameplay.Game.TargetSystem
             var sequence = DOTween.Sequence();
             sequence.Append(transform.DOScale(randomScale, 0.12f).SetEase(Ease.OutBack));
             sequence.Append(transform.DOJump(dropTarget, 0.26f, 1, _dropDuration).SetEase(Ease.OutQuad));
-            sequence.Append(transform.DOMove(destination, _travelDuration).SetEase(Ease.InOutCubic));
-            sequence.Join(_spriteRenderer.DOFade(0.1f, _travelDuration * 0.75f).SetEase(Ease.InCubic));
+            sequence.Append(transform.DOMove(destination, travelDuration).SetEase(Ease.InOutCubic));
+            sequence.Join(_spriteRenderer.DOFade(0.1f, travelDuration * 0.75f).SetEase(Ease.InCubic));
             sequence.OnComplete(() =>
             {
                 _currentTween = transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack);
                 _currentTween.OnComplete(() =>
                 {
-                    AudioService.Instance.PlaySfx(SoundType.Coins_Taken);
                     _spriteRenderer.color = Color.white;
                     _spriteRenderer.DOFade(1f, 0f);
                     gameObject.SetActive(false);

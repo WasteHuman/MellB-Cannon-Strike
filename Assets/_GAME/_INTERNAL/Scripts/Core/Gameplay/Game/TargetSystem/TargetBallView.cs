@@ -1,5 +1,6 @@
 using System;
 using Core.Gameplay.Game.Player;
+using Core.Services.Audio;
 using TMPro;
 using UI.Animations.Game;
 using UnityEngine;
@@ -119,10 +120,11 @@ namespace Core.Gameplay.Game.TargetSystem
                 return;
 
             _destroyVfx.transform.position = transform.position;
-            _destroyVfx.transform.localScale = transform.localScale;
             _destroyVfx.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             _destroyVfx.Clear();
             _destroyVfx.Play();
+
+            AudioService.Instance.PlaySfx(SoundType.Target_Ball_Explosion);
         }
     }
 }

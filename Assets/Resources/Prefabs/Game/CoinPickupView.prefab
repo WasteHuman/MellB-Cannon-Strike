@@ -110,3 +110,4 @@ MonoBehaviour:
   _travelDuration: 0.42
   _minScaleOffset: 0.5
   _maxScaleOffset: 1
+  _originalScale: {x: 0.325, y: 0.325, z: 0.325}

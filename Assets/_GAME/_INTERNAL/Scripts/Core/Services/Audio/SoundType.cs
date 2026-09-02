@@ -2,6 +2,6 @@ namespace Core.Services.Audio
 {
     public enum SoundType
     {
-        Click, Coins_Taken, Player_Ball_Shoot, Player_Ball_Hit
+        Click, Coins_Take, Player_Ball_Shoot, Player_Ball_Hit, Target_Ball_Explosion
     }
 }
