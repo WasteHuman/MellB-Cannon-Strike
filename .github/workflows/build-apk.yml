@@ -67,9 +67,40 @@ jobs:
             echo "Telegram secrets are not configured" >&2
             exit 1
           fi
-          curl --fail --silent --show-error \
-            --request POST \
-            --form "chat_id=$TELEGRAM_CHAT_ID" \
-            --form "document=@$APK_PATH" \
-            --form "caption=Release APK: com.MSTech.MellBCannonStrike" \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+
+          telegram_url="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument"
+          # Keep each multipart request below Telegram's 50 MB document limit.
+          max_part_size=$((45 * 1024 * 1024))
+          apk_size="$(stat -c '%s' "$APK_PATH")"
+          parts_dir="$RUNNER_TEMP/apk-parts"
+          mkdir -p "$parts_dir"
+
+          if [ "$apk_size" -le "$max_part_size" ]; then
+            parts=("$APK_PATH")
+          else
+            echo "APK is ${apk_size} bytes; splitting it for Telegram"
+            split -b "$max_part_size" -d -a 3 "$APK_PATH" "$parts_dir/part-"
+            mapfile -t parts < <(find "$parts_dir" -type f -name 'part-*' -print | sort)
+          fi
+
+          part_count="${#parts[@]}"
+          part_number=0
+          for part in "${parts[@]}"; do
+            part_number=$((part_number + 1))
+            if [ "$part_count" -eq 1 ]; then
+              caption="Release APK: com.MSTech.MellBCannonStrike"
+            else
+              caption="Release APK part $part_number/$part_count. Reassemble in order with: cat part-* > com.mellbcannon.strike.apk"
+            fi
+
+            response="$(curl --fail --silent --show-error \
+              --request POST \
+              --form-string "chat_id=$TELEGRAM_CHAT_ID" \
+              --form "document=@$part" \
+              --form-string "caption=$caption" \
+              "$telegram_url")"
+            if ! grep -q '"ok":true' <<< "$response"; then
+              echo "Telegram API rejected part $part_number: $response" >&2
+              exit 1
+            fi
+          done
