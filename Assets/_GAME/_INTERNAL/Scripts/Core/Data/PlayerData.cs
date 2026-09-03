@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Core.Data
@@ -21,6 +22,32 @@ namespace Core.Data
 
         public PlayerData()
         {
+            EnsureValidState();
+        }
+
+        [JsonConstructor]
+        public PlayerData(
+            string currentPlayerSkinId = null,
+            string currentPlayerBallSkinId = null,
+            int currentPlayerDamage = 0,
+            float currentPlayerReload = 0f,
+            float coins = 0f,
+            bool isTutorialCompleted = false,
+            DateTime? lastDailyBonusTime = null,
+            List<string> purchasedPlayerSkins = null,
+            List<string> purchasedPlayerBallSkins = null,
+            List<string> purchasedUpgrades = null)
+        {
+            CurrentPlayerSkinId = currentPlayerSkinId;
+            CurrentPlayerBallSkinId = currentPlayerBallSkinId;
+            CurrentPlayerDamage = currentPlayerDamage;
+            CurrentPlayerReload = currentPlayerReload;
+            Coins = coins;
+            IsTutorialCompleted = isTutorialCompleted;
+            LastDailyBonusTime = lastDailyBonusTime;
+            PurchasedPlayerSkins = purchasedPlayerSkins ?? new List<string>();
+            PurchasedPlayerBallSkins = purchasedPlayerBallSkins ?? new List<string>();
+            PurchasedUpgrades = purchasedUpgrades ?? new List<string>();
             EnsureValidState();
         }
 

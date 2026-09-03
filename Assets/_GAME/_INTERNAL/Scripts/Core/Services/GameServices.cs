@@ -49,14 +49,18 @@ namespace Core.Services
             if (PlayerService != null)
             {
                 var playerData = PlayerService.GetData();
+                
                 SaveService.PlayerData.CurrentPlayerSkinId = playerData.CurrentPlayerSkinId;
                 SaveService.PlayerData.CurrentPlayerBallSkinId = playerData.CurrentPlayerBallSkinId;
                 SaveService.PlayerData.CurrentPlayerDamage = playerData.CurrentPlayerDamage;
                 SaveService.PlayerData.CurrentPlayerReload = playerData.CurrentPlayerReload;
                 SaveService.PlayerData.IsTutorialCompleted = playerData.IsTutorialCompleted;
-                SaveService.PlayerData.PurchasedPlayerSkins = new List<string>(playerData.PurchasedPlayerSkins);
-                SaveService.PlayerData.PurchasedPlayerBallSkins = new List<string>(playerData.PurchasedPlayerBallSkins);
-                SaveService.PlayerData.PurchasedUpgrades = new List<string>(playerData.PurchasedUpgrades);
+
+                SaveService.PlayerData.PurchasedPlayerSkins = new(playerData.PurchasedPlayerSkins);
+
+                SaveService.PlayerData.PurchasedPlayerBallSkins = new(playerData.PurchasedPlayerBallSkins);
+
+                SaveService.PlayerData.PurchasedUpgrades = new(playerData.PurchasedUpgrades);
             }
 
             if (EconomyService != null)

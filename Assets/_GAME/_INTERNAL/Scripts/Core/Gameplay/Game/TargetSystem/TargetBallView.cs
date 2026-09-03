@@ -15,7 +15,8 @@ namespace Core.Gameplay.Game.TargetSystem
         [SerializeField] private ParticleSystem _destroyVfx;
 
         [Space(5), Header("Physics Setup")]
-        [SerializeField] private float _impulseForce = 1.5f;
+        [SerializeField] private float _minImpulseForce = 12.5f;
+        [SerializeField] private float _maxImpulseForce = 20f;
         [SerializeField] private float _speed = 2.5f;
 
         private Rigidbody2D _rb;
@@ -67,8 +68,9 @@ namespace Core.Gameplay.Game.TargetSystem
             _collider.enabled = true;
 
             transform.position = position;
+            float endImpulseForce = UnityEngine.Random.Range(_minImpulseForce, _maxImpulseForce);
 
-            _rb.AddForce(impulseDirection * _impulseForce, ForceMode2D.Impulse);
+            _rb.AddForce(impulseDirection * endImpulseForce, ForceMode2D.Impulse);
         }
 
         public void SetSprite(Sprite sprite) => _targetSprite.sprite = sprite;
