@@ -40,7 +40,6 @@ namespace Core.Gameplay.Game.Player
 
         private UniTaskCompletionSource _hitProjectileSource;
         private bool _isPlayerAlive = true;
-        private bool _isTouchDragging;
         private bool _isGameplayStarted;
 
         public bool IsPlayerAlive => _isPlayerAlive;
@@ -51,7 +50,6 @@ namespace Core.Gameplay.Game.Player
         {
             _isPlayerAlive = true;
             _isGameplayStarted = false;
-            _isTouchDragging = false;
 
             LoadCurrentPlayerSkins(
                 GameServices.PlayerService.CurrentPlayerSkinId,
@@ -93,19 +91,13 @@ namespace Core.Gameplay.Game.Player
             if (TryGetDragTargetPosition(out var dragWorldPosition, out var isDragging))
             {
                 if (!isDragging)
-                {
-                    _isTouchDragging = false;
                     return;
-                }
 
-                _isTouchDragging = true;
                 var clampedX = Mathf.Clamp(dragWorldPosition.x, MIN_X, MAX_X);
                 var targetPosition = new Vector3(clampedX, _player.transform.position.y, _player.transform.position.z);
                 _player.transform.position = Vector3.Lerp(_player.transform.position, targetPosition, Time.deltaTime * _playerMoveSpeed);
                 return;
             }
-
-            _isTouchDragging = false;
 
 #if UNITY_EDITOR
             if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed)
@@ -158,13 +150,7 @@ namespace Core.Gameplay.Game.Player
         {
             while (_isPlayerAlive && !token.IsCancellationRequested)
             {
-                if (_state != PlayerState.Idle)
-                {
-                    await UniTask.Yield(token);
-                    continue;
-                }
-
-                if (!_isTouchDragging)
+                if (_state != PlayerState.Idle || !_isGameplayStarted)
                 {
                     await UniTask.Yield(token);
                     continue;
@@ -226,7 +212,6 @@ namespace Core.Gameplay.Game.Player
                 return;
 
             _isGameplayStarted = true;
-            _isTouchDragging = false;
         }
 
         private bool TryGetDragTargetPosition(out Vector3 worldPosition, out bool isDragging)
