@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b0b9e0bd07aa438f4744a1a5d3add, type: 3}
   m_Name: DebugConfig
   m_EditorClassIdentifier: Assembly-CSharp::Core.SO.Debug.DebugConfig
-  <IsDebug>k__BackingField: 1
+  <IsDebug>k__BackingField: 0
