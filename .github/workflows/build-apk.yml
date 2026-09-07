@@ -65,7 +65,7 @@ jobs:
           artifacts_json=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
           
           # Ищем артефакт по имени
-          artifact_id=$(echo "$artifacts_json" | jq -r '.artifacts[] | select(.name == "com.WasteMoonGames.PoCIdle") | .id')
+          artifact_id=$(echo "$artifacts_json" | jq -r '.artifacts[] | select(.name == "com.mellbcannon.strike") | .id')
           
           if [ -z "$artifact_id" ] || [ "$artifact_id" = "null" ]; then
             echo "Failed to find artifact" >&2
