@@ -80,7 +80,8 @@ namespace Core.WheelOfLuck
                 isWin: isWin,
                 rewardCoins: rewardCoins);
 
-            GameServices.EconomyService.AddCoins(result.RewardCoins);
+            if(result.RewardCoins > 0f)
+                GameServices.EconomyService.AddCoins(result.RewardCoins);
 
             if (reward.ReportAnalytics)
             {

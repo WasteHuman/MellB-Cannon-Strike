@@ -109,11 +109,11 @@ namespace Core.Gameplay.Game.TargetSystem
             _rb.bodyType = RigidbodyType2D.Static;
             _collider.enabled = false;
 
-            PlayDestroyVfx();
-
             _currentHp = 0;
             _isDestroyed = true;
             CollapseAnimation(() => onComplete?.Invoke(this));
+
+            PlayDestroyVfx();
         }
 
         private void PlayDestroyVfx()

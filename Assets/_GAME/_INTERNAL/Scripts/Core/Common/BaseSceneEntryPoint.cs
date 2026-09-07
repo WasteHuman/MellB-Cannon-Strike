@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
 namespace Core.Common
 {
@@ -15,6 +16,7 @@ namespace Core.Common
         private void OnDestroy()
         {
             _controller.Exit();
+            DOTween.KillAll();
         }
     }
 }

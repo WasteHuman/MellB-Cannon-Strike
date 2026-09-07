@@ -154,7 +154,7 @@ namespace UI.Shop
                     return;
 
                 if (_shopService.BuyPlayerSkin(id))
-                    selectedItem.UpdateToPurchasedItemView();
+                    selectedItem.UpdateToPurchasedItemView(true);
                 return;
             }
 
@@ -165,7 +165,7 @@ namespace UI.Shop
                     return;
 
                 if (_shopService.BuyPlayerBallSkin(id))
-                    selectedItem.UpdateToPurchasedItemView();
+                    selectedItem.UpdateToPurchasedItemView(true);
                 return;
             }
 
@@ -176,7 +176,7 @@ namespace UI.Shop
                     return;
 
                 if (_shopService.BuyPlayerUpgrade(id))
-                    selectedItem.UpdateToPurchasedItemView();
+                    selectedItem.UpdateToPurchasedItemView(true);
             }
         }
 
@@ -189,7 +189,7 @@ namespace UI.Shop
                 prevSelectedItem.UpdateToUnselectedItemView(prevSelectedItem.Type);
 
                 var selectedItem = _playerSkinViews.Find(skin => skin.ItemId == id);
-                selectedItem.UpdateToSelectedItemView();
+                selectedItem.UpdateToSelectedItemView(true);
             }
 
             if (id.Contains("Ball"))
@@ -199,7 +199,7 @@ namespace UI.Shop
                 prevSelectedItem.UpdateToUnselectedItemView(prevSelectedItem.Type);
 
                 var selectedItem = _ballSkinViews.Find(skin => skin.ItemId == id);
-                selectedItem.UpdateToSelectedItemView();
+                selectedItem.UpdateToSelectedItemView(true);
             }
         }
     }

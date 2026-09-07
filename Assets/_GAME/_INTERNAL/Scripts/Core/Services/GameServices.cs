@@ -38,7 +38,7 @@ namespace Core.Services
             ShopService.Init(PlayerService, EconomyService, shopEntitiesConfig);
 
             GameSessionService = new();
-            GameSessionService.Init(EconomyService);
+            GameSessionService.Init(EconomyService, PlayerService);
         }
 
         public static void SaveAll()

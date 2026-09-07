@@ -159,14 +159,10 @@ namespace UI.Animations.Game
 
             _collapseSequence = DOTween.Sequence();
 
-            float squashDuration = _collaplseAnimationDuration * 0.25f;
+            float squashDuration = _collaplseAnimationDuration * 0.15f;
             float collapseDuration = _collaplseAnimationDuration * 0.75f;
 
             _shakeScaleTween = transform.DOShakeScale(_shakeScaleStrength, _shakeScaleAnimationDuration);
-
-            _collapseSequence
-                .Append(transform.DOScale(_originalScale * 1.1f, squashDuration))
-                .SetEase(_collapseInEase);
 
             _collapseSequence
                 .Append(transform.DOScale(Vector3.zero, squashDuration))

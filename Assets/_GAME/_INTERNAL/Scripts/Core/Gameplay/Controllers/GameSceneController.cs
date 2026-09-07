@@ -24,9 +24,6 @@ namespace Core.Gameplay.Controllers
 
         public override void Enter()
         {
-            GameServices.PlayerService.ResetSessionScore();
-            GameServices.PlayerService.ResetEarnedSessionCoins();
-
             _playerController.OnPlayerLose += HandlePlayerLose;
             _gameplayTutorialView.OnTutorialSkipped += HandleGameplayStarted;
         }

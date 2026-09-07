@@ -22,6 +22,8 @@ namespace Core.WheelOfLuck
         [Header("Buttons")]
         [SerializeField] private ActionButton _startSpinButton;
 
+        private Vector2 _originalScale;
+
         private Tween _spinTween;
         private Tween _pulseTween;
         private Action _spinButtonHandler;
@@ -36,6 +38,8 @@ namespace Core.WheelOfLuck
                 _spinButtonHandler = () => OnSpinClicked?.Invoke();
                 _startSpinButton.OnButtonClick += _spinButtonHandler;
             }
+
+            _originalScale = _wheelTransform.localScale;
         }
 
         private void OnDestroy()
@@ -74,7 +78,7 @@ namespace Core.WheelOfLuck
             if (_cooldownText == null)
                 return;
 
-            if(!_cooldownText.gameObject.activeSelf)
+            if(!_cooldownText.gameObject.activeSelf && remaining.Hours > 0f)
                 _cooldownText.gameObject.SetActive(true);
 
             _cooldownText.text = FormatTimeSpan(remaining);
@@ -94,6 +98,8 @@ namespace Core.WheelOfLuck
 
             if (_pulseTween != null && _pulseTween.IsActive())
                 return;
+
+            _wheelTransform.localScale = _originalScale;
 
             _pulseTween?.Kill();
             _pulseTween = _wheelTransform

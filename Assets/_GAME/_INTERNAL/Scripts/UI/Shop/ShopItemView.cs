@@ -1,5 +1,6 @@
 using System;
 using Core.Data;
+using Core.Services.Audio;
 using DG.Tweening;
 using TMPro;
 using UI.Other;
@@ -99,17 +100,20 @@ namespace UI.Shop
             _buyAndSelectButton.OnButtonClick += HandleButtonClick;
         }
 
-        public void UpdateToPurchasedItemView()
+        public void UpdateToPurchasedItemView(bool playSfx = false)
         {
             if (!_isPurchased)
             {
                 _isPurchased = true;
                 _costLabel.gameObject.SetActive(false);
                 UpdateToUnselectedItemView(_type);
+
+                if(playSfx)
+                    AudioService.Instance.PlaySfx(SoundType.Item_Purchased);
             }
         }
 
-        public void UpdateToSelectedItemView()
+        public void UpdateToSelectedItemView(bool playSfx = false)
         {
             if (_isPurchased)
             {
@@ -120,6 +124,9 @@ namespace UI.Shop
                 _costLabel.gameObject.SetActive(false);
                 _isSelected = true;
                 StartPulseAnimation();
+
+                if(playSfx)
+                    AudioService.Instance.PlaySfx(SoundType.Item_Selected);
             }
         }
 

@@ -4,6 +4,7 @@ using UI.Other;
 using System;
 using DG.Tweening;
 using TMPro;
+using Core.Services.Audio;
 
 namespace UI.Screens
 {
@@ -48,6 +49,8 @@ namespace UI.Screens
                 .DOAnchorPosY(_targetY, _animationDuration)
                 .SetEase(Ease.InOutBack)
                 .OnComplete(() => _panelRect.anchoredPosition = new(_panelRect.anchoredPosition.x, _targetY));
+
+            AudioService.Instance.PlaySfx(SoundType.Player_Lose);
         }
 
         public void SetupScreen(int score, int earnedCoins)

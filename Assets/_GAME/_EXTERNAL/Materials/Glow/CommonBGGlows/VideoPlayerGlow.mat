@@ -41,7 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BoxSize: 0.89
+    - _BoxSize: 0.855
     - _ColorMask: 15
     - _EnableExternalAlpha: 0
     - _GlowPower: 3.5

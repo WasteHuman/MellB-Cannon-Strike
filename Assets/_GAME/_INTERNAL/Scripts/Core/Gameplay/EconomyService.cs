@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.Services.Audio;
 using UnityEngine;
 
 namespace Core.Gameplay
@@ -9,6 +10,20 @@ namespace Core.Gameplay
         private bool _isDailyFreeBonusAvailable;
 
         private DateTime _dailyFreeBonusNextRefreshTimeUtc;
+
+        public float CurrentCoinsBalance
+        {
+            get => _currentCoinsBalance;
+            private set
+            {
+                if(value < 0f)
+                    throw new System.ArgumentOutOfRangeException(nameof(value), "Coins cannot be a negative!");
+
+                _currentCoinsBalance = value;
+                AudioService.Instance.PlaySfx(SoundType.Coins_Take);
+                OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
+            }
+        }
 
         public event Action<float> OnCoinsBalanceChanged;
 
@@ -47,8 +62,7 @@ namespace Core.Gameplay
                 return;
             }
 
-            _currentCoinsBalance += amount;
-            OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
+            CurrentCoinsBalance += amount;
         }
 
         /// <summary>
@@ -68,8 +82,7 @@ namespace Core.Gameplay
                 return false;
             }
 
-            _currentCoinsBalance -= amount;
-            OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
+            CurrentCoinsBalance -= amount;
             
             return true;
         }
@@ -77,15 +90,14 @@ namespace Core.Gameplay
         /// <summary>
         /// Проверить, достаточно ли средств
         /// </summary>
-        public bool HasEnoughBalance(float amount) => _currentCoinsBalance >= amount;
+        public bool HasEnoughBalance(float amount) => CurrentCoinsBalance >= amount;
 
         /// <summary>
         /// Установить баланс (для тестирования или загрузки из сохранений)
         /// </summary>
         public void SetBalance(float amount)
         {
-            _currentCoinsBalance = Mathf.Max(0, amount);
-            OnCoinsBalanceChanged?.Invoke(_currentCoinsBalance);
+            CurrentCoinsBalance = Mathf.Max(0, amount);
         }
 
         private void CheckDailyFreeBonus()
