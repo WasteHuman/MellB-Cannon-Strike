@@ -12,6 +12,8 @@ namespace Core.Gameplay.Game.Player
     public class PlayerProjectile : ObjectAnimations
     {
         [SerializeField] private Vector2 _shootDirection = Vector2.up;
+        [Tooltip("Reference to player controller for fire vision assist")]
+        [SerializeField] private PlayerController _playerController;
 
         private int _currentDamage = 1;
 
@@ -57,11 +59,23 @@ namespace Core.Gameplay.Game.Player
         {
             _hasHit = false;
 
+            Vector2 finalShootDirection = _shootDirection;
+            if (_playerController != null && _playerController.GetFireVisionAssistStrength() > 0f)
+            {
+                var nearestTarget = _playerController.GetNearestTarget();
+                if (nearestTarget != null)
+                {
+                    float assistStrength = _playerController.GetFireVisionAssistStrength();
+                    Vector2 targetDirection = ((Vector2)nearestTarget.transform.position - (Vector2)_defaultPosition.position).normalized;
+                    finalShootDirection = Vector2.Lerp(_shootDirection, targetDirection, assistStrength).normalized;
+                }
+            }
+
             _rb.angularVelocity = 0f;
             _rb.linearVelocity = Vector2.zero;
 
             _rb.bodyType = RigidbodyType2D.Dynamic;
-            _rb.AddForce(_shootDirection * shootForce, ForceMode2D.Impulse);
+            _rb.AddForce(finalShootDirection * shootForce, ForceMode2D.Impulse);
             AudioService.Instance.PlaySfx(SoundType.Player_Ball_Shoot);
             transform.SetParent(null);
         }

@@ -70,6 +70,21 @@ namespace Core.Gameplay.Game.TargetSystem
                     _targets[i].FreezeTarget();
         }
 
+        public IReadOnlyList<TargetBallView> GetActiveTargets()
+        {
+            var activeTargets = new List<TargetBallView>();
+
+            for(int i = 0; i < _targets.Count; i++)
+            {
+                var target = _targets[i];
+
+                if(target.gameObject.activeSelf)
+                    activeTargets.Add(target);
+            }
+
+            return activeTargets.AsReadOnly();
+        }
+
         private void InitSubscribes()
         {
             var initialTargets = _targetsPool.GetFreeElements();

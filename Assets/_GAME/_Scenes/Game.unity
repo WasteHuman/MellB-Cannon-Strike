@@ -580,6 +580,7 @@ GameObject:
   - component: {fileID: 243403724}
   - component: {fileID: 243403725}
   - component: {fileID: 243403726}
+  - component: {fileID: 243403727}
   m_Layer: 0
   m_Name: LeftWall
   m_TagString: Untagged
@@ -675,6 +676,47 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &243403727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 243403723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6611354990b548643a397b026d18e07a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Game.TargetSystem.TargetBallView
+  _scaleAppearAnimationDuration: 0.35
+  _moveAppearAnimationDuration: 1.75
+  _fadeAppearAnimtionDuration: 1.25
+  _hoverAnimationDuration: 0.5
+  _pulseAnimationDuration: 1
+  _collaplseAnimationDuration: 0.55
+  _shakeScaleAnimationDuration: 0.15
+  _objectRect: {fileID: 0}
+  _yMoveOffset: 1
+  _hoverLoopType: 1
+  _hoverLoopCount: -1
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _moveAppearInEase: 27
+  _moveAppearOutEase: 26
+  _targetCanvasGroup: {fileID: 0}
+  _shakeScaleStrength: 0.08
+  _collapseInEase: 6
+  _collapseOutEase: 26
+  _pulseTargetScale: 0.9
+  _pulseLoopType: 1
+  _pulseLoopsCount: -1
+  _hoverAnimationEnabled: 0
+  _pulseAnimationEnabled: 0
+  _targetSprite: {fileID: 0}
+  _hpLabel: {fileID: 0}
+  _destroyVfx: {fileID: 0}
+  _minImpulseForce: 12.5
+  _maxImpulseForce: 20
+  _speed: 2.5
 --- !u!1 &269185217
 GameObject:
   m_ObjectHideFlags: 0
@@ -5475,6 +5517,8 @@ MonoBehaviour:
   _playerReloadTime: 0.75
   _playerShootForce: 25
   _playerSpriteChangeDelay: 0.2
+  _fireVisionAssistStrength: 50
+  _ballSpawner: {fileID: 1443518883}
   _playerSkinDatas:
   - SkinId: Skin_0
     IdlePose: {fileID: 21300000, guid: 9159aa6ac2c9e2b48bebeb298e919070, type: 3}
@@ -5878,6 +5922,7 @@ MonoBehaviour:
   _hoverAnimationEnabled: 0
   _pulseAnimationEnabled: 0
   _shootDirection: {x: 0, y: 1}
+  _playerController: {fileID: 1805253510}
 --- !u!50 &1809350163
 Rigidbody2D:
   serializedVersion: 5
@@ -6067,6 +6112,7 @@ GameObject:
   - component: {fileID: 1934055196}
   - component: {fileID: 1934055197}
   - component: {fileID: 1934055198}
+  - component: {fileID: 1934055199}
   m_Layer: 0
   m_Name: RightWall
   m_TagString: Untagged
@@ -6162,6 +6208,47 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1934055199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934055195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6611354990b548643a397b026d18e07a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Gameplay.Game.TargetSystem.TargetBallView
+  _scaleAppearAnimationDuration: 0.35
+  _moveAppearAnimationDuration: 1.75
+  _fadeAppearAnimtionDuration: 1.25
+  _hoverAnimationDuration: 0.5
+  _pulseAnimationDuration: 1
+  _collaplseAnimationDuration: 0.55
+  _shakeScaleAnimationDuration: 0.15
+  _objectRect: {fileID: 0}
+  _yMoveOffset: 1
+  _hoverLoopType: 1
+  _hoverLoopCount: -1
+  _targetPosition: {x: 0, y: 0, z: 0}
+  _moveAppearInEase: 27
+  _moveAppearOutEase: 26
+  _targetCanvasGroup: {fileID: 0}
+  _shakeScaleStrength: 0.08
+  _collapseInEase: 6
+  _collapseOutEase: 26
+  _pulseTargetScale: 0.9
+  _pulseLoopType: 1
+  _pulseLoopsCount: -1
+  _hoverAnimationEnabled: 0
+  _pulseAnimationEnabled: 0
+  _targetSprite: {fileID: 0}
+  _hpLabel: {fileID: 0}
+  _destroyVfx: {fileID: 0}
+  _minImpulseForce: 12.5
+  _maxImpulseForce: 20
+  _speed: 2.5
 --- !u!1 &1963256733
 GameObject:
   m_ObjectHideFlags: 0
@@ -6240,7 +6327,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 12, y: 1}
+  m_Size: {x: 15, y: 1}
   m_EdgeRadius: 0
 --- !u!50 &1963256737
 Rigidbody2D:

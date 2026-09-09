@@ -26,6 +26,12 @@ namespace Core.Gameplay.Game.Player
         [Tooltip("Using for setup delay between Player Pose sprites")]
         [SerializeField] private float _playerSpriteChangeDelay = 0.35f;
 
+        [Space(5), Header("Fire Vision Assist Setup")]
+        [Tooltip("Fire vision assist strength from 0 to 100 percent")]
+        [Range(0f, 100f)]
+        [SerializeField] private float _fireVisionAssistStrength = 0f;
+        [SerializeField] private TargetBallSpawner _ballSpawner;
+
         [Space(5), Header("Player Pose Sprites Setup")]
         [SerializeField] private List<PlayerSkinData> _playerSkinDatas = new();
 
@@ -37,6 +43,9 @@ namespace Core.Gameplay.Game.Player
         private PlayerState _state = PlayerState.Idle;
         private PlayerSkinData _playerSkinData;
         private Sprite _currentBallSkin;
+        private int _lastMoveDirection = 1; // 1 = right, -1 = left
+        private TargetBallView _nearestTarget;
+        private Camera _camera;
 
         private UniTaskCompletionSource _hitProjectileSource;
         private bool _isPlayerAlive = true;
@@ -60,6 +69,8 @@ namespace Core.Gameplay.Game.Player
             _ballProjectile.OnBallHitted += HandleHittedBall;
 
             _isPlayerAlive = true;
+
+            _camera = Camera.main;
 
             ProjectileFlowAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
@@ -88,6 +99,9 @@ namespace Core.Gameplay.Game.Player
             if(!_isPlayerAlive || !_isGameplayStarted)
                 return;
 
+                if (_fireVisionAssistStrength > 0f)
+                    _nearestTarget = FindNearestTarget();
+
             if (TryGetDragTargetPosition(out var dragWorldPosition, out var isDragging))
             {
                 if (!isDragging)
@@ -96,6 +110,15 @@ namespace Core.Gameplay.Game.Player
                 var clampedX = Mathf.Clamp(dragWorldPosition.x, MIN_X, MAX_X);
                 var targetPosition = new Vector3(clampedX, _player.transform.position.y, _player.transform.position.z);
                 _player.transform.position = Vector3.Lerp(_player.transform.position, targetPosition, Time.deltaTime * _playerMoveSpeed);
+
+                if (dragWorldPosition.x > _player.transform.position.x + 0.01f)
+                    _lastMoveDirection = 1;
+                else if (dragWorldPosition.x < _player.transform.position.x - 0.01f)
+                    _lastMoveDirection = -1;
+
+                _player.transform.localScale = 
+                    new Vector3(_lastMoveDirection * Mathf.Abs(_player.transform.localScale.x), _player.transform.localScale.y, _player.transform.localScale.z);
+
                 return;
             }
 
@@ -214,6 +237,10 @@ namespace Core.Gameplay.Game.Player
             _isGameplayStarted = true;
         }
 
+        public float GetFireVisionAssistStrength() => _fireVisionAssistStrength / 100f;
+
+        public TargetBallView GetNearestTarget() => _nearestTarget;
+
         private bool TryGetDragTargetPosition(out Vector3 worldPosition, out bool isDragging)
         {
             worldPosition = Vector3.zero;
@@ -250,10 +277,56 @@ namespace Core.Gameplay.Game.Player
             return false;
         }
 
+        private TargetBallView FindNearestTarget()
+        {
+            var allTargets = _ballSpawner.GetActiveTargets();
+
+            if (allTargets == null || allTargets.Count == 0)
+                return null;
+
+            TargetBallView nearest = null;
+            float nearestDistance = float.MaxValue;
+            Vector2 playerPosition = _player.transform.position;
+
+            for (int i = 0; i < allTargets.Count; i++)
+            {
+                if (allTargets[i] == null || !allTargets[i].gameObject.activeSelf)
+                    continue;
+
+                // Check if target is visible on screen
+                if (!IsTargetVisibleOnScreen(allTargets[i]))
+                    continue;
+
+                float distance = Vector2.Distance(playerPosition, allTargets[i].transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearest = allTargets[i];
+                }
+            }
+
+            return nearest;
+        }
+
+        private bool IsTargetVisibleOnScreen(TargetBallView target)
+        {
+            if (_camera == null)
+                return false;
+
+            Vector3 viewportPoint = _camera.WorldToViewportPoint(target.transform.position);
+
+            // Check if target is within viewport (0-1 range) and in front of camera
+            return viewportPoint.z > 0 &&
+                   viewportPoint.x >= 0f && viewportPoint.x <= 1f &&
+                   viewportPoint.y >= 0f && viewportPoint.y <= 1f;
+        }
+
         private void HandleLeftButtonClick()
         {
             if(!_isPlayerAlive)
                 return;
+
+            _lastMoveDirection = -1;
 
             var nextX = _player.transform.position.x - _playerMoveSpeed * Time.deltaTime;
             _player.transform.position = new Vector3(
@@ -261,6 +334,9 @@ namespace Core.Gameplay.Game.Player
                 _player.transform.position.y,
                 _player.transform.position.z
             );
+
+            _player.transform.localScale = 
+                new Vector3(_lastMoveDirection * Mathf.Abs(_player.transform.localScale.x), _player.transform.localScale.y, _player.transform.localScale.z);
         }
 
         private void HandleRightButtonClick()
@@ -268,12 +344,17 @@ namespace Core.Gameplay.Game.Player
             if(!_isPlayerAlive)
                 return;
 
+            _lastMoveDirection = 1;
+
             var nextX = _player.transform.position.x + _playerMoveSpeed * Time.deltaTime;
             _player.transform.position = new Vector3(
                 Mathf.Min(nextX, MAX_X),
                 _player.transform.position.y,
                 _player.transform.position.z
             );
+
+            _player.transform.localScale = 
+                new Vector3(_lastMoveDirection * Mathf.Abs(_player.transform.localScale.x), _player.transform.localScale.y, _player.transform.localScale.z);
         }
 
         private void HandleHittedBall() => _hitProjectileSource?.TrySetResult();
