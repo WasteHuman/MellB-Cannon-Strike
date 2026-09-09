@@ -30,6 +30,9 @@ jobs:
           unityVersion: 6000.4.1f1
           targetPlatform: Android
           buildName: com.mellbcannon.strike
+          versioning: Custom
+          version: "1.1"
+          androidVersionCode: 2
           androidExportType: androidPackage
           androidKeystoreName: user.keystore
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
