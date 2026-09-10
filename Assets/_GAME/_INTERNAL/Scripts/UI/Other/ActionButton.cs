@@ -127,7 +127,7 @@ namespace UI.Other
 
             Interactable = false;
 
-            if (PlayerPrefs.GetInt(GameConstants.KEY_VIBRATIONS) == 1)
+            if (PlayerPrefs.GetInt(GameConstants.KEY_VIBRATIONS, 1) == 1)
                 MOST_HapticFeedback.Generate(_onClick);
 
             AudioService.Instance.PlaySfx(SoundType.Click);
