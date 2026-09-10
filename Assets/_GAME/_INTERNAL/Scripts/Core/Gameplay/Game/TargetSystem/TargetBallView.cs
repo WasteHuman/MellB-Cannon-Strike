@@ -84,7 +84,9 @@ namespace Core.Gameplay.Game.TargetSystem
         public void FreezeTarget()
         {
             _rb.bodyType = RigidbodyType2D.Static;
-            gameObject.SetActive(false);
+
+            CollapseAnimation();
+            PlayDestroyVfx();
         }
 
         private void ApplyDamage(int damage)

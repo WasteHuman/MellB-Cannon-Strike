@@ -3001,7 +3001,7 @@ MonoBehaviour:
   _panelRect: {fileID: 901109268}
   _scoreLabel: {fileID: 28458656}
   _earnedCoinsLabel: {fileID: 1247331391}
-  _animationDuration: 1
+  _animationDuration: 0.75
   _targetY: 0
   _replayButton: {fileID: 1502129591}
   _homeButton: {fileID: 1529577857}
@@ -5516,7 +5516,7 @@ MonoBehaviour:
   _playerMoveSpeed: 5
   _playerReloadTime: 0.75
   _playerShootForce: 25
-  _playerSpriteChangeDelay: 0.2
+  _playerSpriteChangeDelay: 0.125
   _fireVisionAssistStrength: 50
   _ballSpawner: {fileID: 1443518883}
   _playerSkinDatas:
