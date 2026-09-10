@@ -287,14 +287,20 @@ namespace Core.Gameplay.Game.Player
             TargetBallView nearest = null;
             float nearestDistance = float.MaxValue;
             Vector2 playerPosition = _player.transform.position;
+            Vector2 playerDirection = new(_lastMoveDirection, 0);
 
             for (int i = 0; i < allTargets.Count; i++)
             {
                 if (allTargets[i] == null || !allTargets[i].gameObject.activeSelf)
                     continue;
 
-                // Check if target is visible on screen
                 if (!IsTargetVisibleOnScreen(allTargets[i]))
+                    continue;
+
+                Vector2 toTarget = ((Vector2)allTargets[i].transform.position - playerPosition).normalized;
+                float dotProduct = Vector2.Dot(playerDirection, toTarget);
+
+                if (dotProduct <= 0f)
                     continue;
 
                 float distance = Vector2.Distance(playerPosition, allTargets[i].transform.position);
@@ -315,7 +321,6 @@ namespace Core.Gameplay.Game.Player
 
             Vector3 viewportPoint = _camera.WorldToViewportPoint(target.transform.position);
 
-            // Check if target is within viewport (0-1 range) and in front of camera
             return viewportPoint.z > 0 &&
                    viewportPoint.x >= 0f && viewportPoint.x <= 1f &&
                    viewportPoint.y >= 0f && viewportPoint.y <= 1f;
