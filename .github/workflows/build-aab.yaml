@@ -1,0 +1,119 @@
+name: Build Android AAB
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build signed Release AAB
+    runs-on: ubuntu-latest
+    environment: Cloud Unity Build
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Build AAB
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .
+          unityVersion: 6000.4.1f1
+          targetPlatform: Android
+          buildName: com.mellbcannon.strike
+          versioning: Custom
+          version: "1.1"
+          androidVersionCode: 2
+          androidExportType: androidAppBundle
+          androidKeystoreName: user.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEY_ALIAS }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+
+      - name: Locate AAB
+        id: apk
+        shell: bash
+        run: |
+          apk_path="$(find build -type f -name '*.aab' -print -quit)"
+          if [ -z "$apk_path" ]; then
+            echo "AAB was not produced" >&2
+            exit 1
+          fi
+          echo "path=$apk_path" >> "$GITHUB_OUTPUT"
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: com.mellbcannon.strike
+          path: ${{ steps.apk.outputs.path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Get artifact URL
+        id: artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Получаем список артефактов для текущего run
+          artifacts_json=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+          
+          # Ищем артефакт по имени
+          artifact_id=$(echo "$artifacts_json" | jq -r '.artifacts[] | select(.name == "com.mellbcannon.strike") | .id')
+          
+          if [ -z "$artifact_id" ] || [ "$artifact_id" = "null" ]; then
+            echo "Failed to find artifact" >&2
+            exit 1
+          fi
+          
+          # Формируем URL для скачивания артефакта
+          artifact_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${artifact_id}"
+          echo "url=$artifact_url" >> "$GITHUB_OUTPUT"
+          echo "Artifact URL: $artifact_url"
+
+      - name: Send AAB link to Telegram
+        shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          ARTIFACT_URL: ${{ steps.artifact.outputs.url }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "Telegram secrets are not configured" >&2
+            exit 1
+          fi
+          
+          telegram_url="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+          json_payload=$(jq -n \
+            --arg chat_id "$TELEGRAM_CHAT_ID" \
+            --arg text "Release AAB готов!
+          
+          com.mellbcannon.strike v1.1
+          
+          Скачать артефакт:
+          $ARTIFACT_URL" \
+            '{chat_id: $chat_id, text: $text}')
+          
+          echo "Sending message to Telegram..."
+
+          response="$(curl --fail --silent --show-error \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --data "$json_payload" \
+            "$telegram_url")"
+
+          if ! echo "$response" | grep -q '"ok":true'; then
+            echo "Telegram API rejected message: $response" >&2
+            exit 1
+          fi
+
+          echo "Telegram message sent successfully!"
